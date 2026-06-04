@@ -34,13 +34,14 @@ body{
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }
-/* court-line atmosphere */
+/* court-line grid */
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(900px 500px at 80% -10%, rgba(38,224,200,.10), transparent 60%),
-    radial-gradient(800px 600px at 10% 110%, rgba(255,138,30,.12), transparent 60%),
-    repeating-linear-gradient(0deg, transparent 0 38px, rgba(255,255,255,.012) 38px 39px);
+    repeating-linear-gradient(0deg, transparent 0 40px, rgba(255,255,255,.022) 40px 41px),
+    repeating-linear-gradient(90deg, transparent 0 40px, rgba(255,255,255,.015) 40px 41px);
+  mask-image:radial-gradient(120% 120% at 50% 0%, #000 55%, transparent 100%);
+  -webkit-mask-image:radial-gradient(120% 120% at 50% 0%, #000 55%, transparent 100%);
 }
 body::after{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
@@ -48,13 +49,39 @@ body::after{
 }
 .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 24px}
 
+/* animated arena-glow backdrop */
+.bg-fx{
+  position:fixed;inset:-12%;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(620px 480px at 78% 6%, rgba(38,224,200,.18), transparent 60%),
+    radial-gradient(720px 560px at 14% 96%, rgba(255,138,30,.20), transparent 62%),
+    radial-gradient(500px 500px at 95% 80%, rgba(38,224,200,.10), transparent 60%);
+  animation:bgdrift 26s ease-in-out infinite alternate;
+  will-change:transform;
+}
+@keyframes bgdrift{
+  0%{transform:translate3d(-1.5%,0,0) scale(1)}
+  50%{transform:translate3d(1.5%,-2%,0) scale(1.07)}
+  100%{transform:translate3d(-1%,1.5%,0) scale(1.03)}
+}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .bg-fx{animation:none}
+}
+
 /* ---------- NAV ---------- */
 nav{
   position:sticky;top:0;z-index:50;
   backdrop-filter:blur(12px);
   background:rgba(10,10,12,.72);
   border-bottom:1px solid var(--line);
+  transition:background .3s, box-shadow .3s, border-color .3s;
 }
+nav.scrolled{background:rgba(10,10,12,.92);box-shadow:0 12px 40px rgba(0,0,0,.5);border-bottom-color:#33333d}
 .nav-in{display:flex;align-items:center;justify-content:space-between;height:68px}
 .brand{display:flex;align-items:center;gap:10px;font-family:'Anton';font-size:24px;letter-spacing:.5px}
 .brand .dot{color:var(--amber)}
@@ -70,6 +97,14 @@ nav{
 
 /* ---------- HERO ---------- */
 .hero{padding:90px 0 70px;position:relative}
+.hero::before{
+  content:"";position:absolute;top:-40px;left:-40px;width:540px;height:540px;max-width:90vw;border-radius:50%;
+  background:radial-gradient(circle, rgba(255,138,30,.18), transparent 64%);
+  filter:blur(20px);pointer-events:none;z-index:0;
+  animation:heroglow 7s ease-in-out infinite alternate;
+}
+@keyframes heroglow{0%{opacity:.55;transform:scale(1)}100%{opacity:1;transform:scale(1.18)}}
+.hero .wrap{position:relative;z-index:1}
 .kicker{
   font-family:'Space Mono';color:var(--cyan);font-size:13px;letter-spacing:3px;text-transform:uppercase;
   opacity:0;animation:rise .7s .05s forwards;
@@ -135,7 +170,13 @@ nav{
 .card{
   background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
   transition:transform .25s, border-color .25s, box-shadow .25s;display:flex;flex-direction:column;
+  position:relative;
 }
+.card::after{
+  content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;opacity:0;transition:opacity .35s;
+  background:radial-gradient(420px circle at 50% -10%, rgba(255,138,30,.14), transparent 70%);
+}
+.card:hover::after{opacity:1}
 .card:hover{transform:translateY(-6px);border-color:var(--amber);box-shadow:0 18px 50px rgba(0,0,0,.5)}
 .thumb{aspect-ratio:16/10;position:relative;overflow:hidden;background:var(--bg-2)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
@@ -314,6 +355,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
 </style>
 </head>
 <body>
+<div class="bg-fx" aria-hidden="true"></div>
 
 <nav>
   <div class="wrap nav-in">
@@ -549,17 +591,19 @@ const ADDON = {
   name:    "NBA 2K Blender Addon",
   version: "v2.1.1",
   price:   "$50",                     // or "Free"
-  pitch:   "The exact Blender addon I use to build every mod on this site — import, edit, and export NBA 2K models without the usual headaches. Built for modders who want a faster, cleaner pipeline.",
+  pitch:   "The exact Blender addon I use to build every mod on this site — import, edit, and export NBA 2K player and arena models (.SCNE) without the usual crashes. Built for modders who want a faster, cleaner pipeline.",
   features: [
-    "One-click import & export of NBA 2K models",
-    "Clean UV and normal handling for sharp results",
-    "Works for player, body, court, and lighting mods",
-    "Regular updates and a quick-start install guide",
+    "Import & export NBA 2K player and arena models (.SCNE)",
+    "Edit geometry and UVs, then export game-ready buffers",
+    "Built-in 'Check Export Accuracy' to verify before you commit",
+    "Correct UV and normal handling — only edited data is changed",
+    "Handles cloth/net simulation meshes and smart arena instancing",
+    "Regular updates and a quick-start install guide (PDF)",
   ],
   img:  "",                            // e.g. "images/addon.jpg"
   kofi: "",                            // e.g. "https://ko-fi.com/s/youraddon"
   // Requirements line shown under the buy button. Edit the values to match.
-  requirements: "Requires Blender 4.2+ LTS · Works with NBA 2K26 · NBA 2K27 support coming soon",
+  requirements: "Requires Blender 3.0+ (tested on 4.2 LTS) · Works with NBA 2K26 · NBA 2K27 support coming soon",
 };
 
 /* ============================================================
@@ -719,6 +763,27 @@ document.addEventListener("keydown", e => { if(e.key==="Escape") closeModal(); }
 function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1600); }
 function copyHandle(){ navigator.clipboard.writeText(DISCORD_USERNAME).then(()=>toast("Username copied!")).catch(()=>toast("Copy failed")); }
 function copyMsg(){ navigator.clipboard.writeText(currentMsg).then(()=>toast("Message copied!")).catch(()=>toast("Copy failed")); }
+
+// nav reacts to scroll
+const navEl = document.querySelector("nav");
+window.addEventListener("scroll", () => {
+  navEl.classList.toggle("scrolled", window.scrollY > 20);
+}, { passive:true });
+
+// scroll-reveal: fade + slide elements in as they enter the viewport
+(function(){
+  const els = [];
+  document.querySelectorAll(".sec-head, .addon-box, .flow-box, .faq-item, #grid .card, #feed .entry")
+    .forEach(el => { el.classList.add("reveal"); els.push(el); });
+  // gentle stagger inside the grid and the feed
+  document.querySelectorAll("#grid .card").forEach((el,i)=> el.style.transitionDelay=(i*45)+"ms");
+  document.querySelectorAll("#feed .entry").forEach((el,i)=> el.style.transitionDelay=(i*70)+"ms");
+  if(!("IntersectionObserver" in window)){ els.forEach(e=>e.classList.add("in")); return; }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { threshold:.1, rootMargin:"0px 0px -6% 0px" });
+  els.forEach(e=>io.observe(e));
+})();
 </script>
 </body>
 </html>
