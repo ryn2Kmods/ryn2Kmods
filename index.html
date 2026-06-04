@@ -512,10 +512,11 @@ const HERO_BADGE = "NBA 2K26 MODS · NBA 2K27 MODS";
    all update automatically.
    ============================================================ */
 const CATEGORIES = [
-  { key:"player",   label:"Players",  color:"#ff8a1e" },
-  { key:"global",   label:"Global",   color:"#26e0c8" },
   { key:"lighting", label:"Lighting", color:"#ffd23e" },
   { key:"court",    label:"Court",    color:"#f25f9e" },
+  // Add these back when you have mods for them:
+  // { key:"player", label:"Players", color:"#ff8a1e" },
+  // { key:"global", label:"Global",  color:"#26e0c8" },
 ];
 
 /* ============================================================
@@ -528,14 +529,14 @@ const CATEGORIES = [
            { name:"...", cat:"player", price:"$8", kofi:"https://ko-fi.com/s/abc123", ... }
    ============================================================ */
 const MODS = [
-  { name:"LeBron — 2009 Cavs Face",     cat:"player",   price:"$8",  img:"", desc:"Accurate face sculpt, hairline, and team-correct details." },
-  { name:"Custom Create-A-Player Pack", cat:"player",   price:"$12", img:"", desc:"5 CAP faces with cyberfaces and accessory rigs." },
-  { name:"Realistic Body & Sweat Pack", cat:"global",   price:"$15", img:"", desc:"Defined muscle, plus face and leg sweat streaks for a lifelike look." },
-  { name:"Global Mod",     cat:"global",   price:"$10", img:"", desc:"Sharper eyes, mouth, and full body-part textures across all players." },
-  { name:"Realistic Arena Lighting & Ads", cat:"lighting", price:"$15", img:"", desc:"Reworked basket and arena ads with realistic, true-to-broadcast lighting." },
-  { name:"Hybrid Lighting Mod",         cat:"lighting", price:"$12", img:"", desc:"Balanced hybrid lighting for a cleaner, more natural arena tone." },
-  { name:"Custom Court — Latest Ads",   cat:"court",    price:"$15", img:"", desc:"Redesigned court with up-to-date ads and realistic floor textures." },
-  { name:"Starter Court Pack",          cat:"court",    price:"Free", img:"", desc:"Free sample court so you can test my install process." },
+  { name:"Broadcast Realism Lighting Overhaul",    cat:"lighting", price:"TBD", img:"", desc:"Full lighting overhaul tuned for true-to-broadcast realism on every court." },
+  { name:"Immersive Lighting",                     cat:"lighting", price:"TBD", img:"", desc:"Deeper, more atmospheric arena lighting for a more immersive look." },
+  { name:"ESPN-Style Lighting Overhaul",           cat:"lighting", price:"TBD", img:"", desc:"Lighting styled after ESPN broadcasts for an authentic TV feel." },
+  { name:"Cinematic Hybrid Real-Shadow Lighting",  cat:"lighting", price:"TBD", img:"", desc:"Cinematic hybrid lighting with realistic shadow detail." },
+  { name:"Cinematic Hybrid Broadcast Lighting",    cat:"lighting", price:"TBD", img:"", desc:"Cinematic hybrid lighting tuned for a polished broadcast look." },
+  { name:"Hybrid Court (Local Broadcast)",         cat:"court",    price:"TBD", img:"", desc:"Custom hybrid court with a local-broadcast presentation and realistic floor textures." },
+  { name:"Hybrid City Court",                      cat:"court",    price:"TBD", img:"", desc:"City-themed hybrid court with updated ads and realistic textures." },
+  { name:"Hybrid Classic Court",                   cat:"court",    price:"TBD", img:"", desc:"Classic-style hybrid court with throwback design and realistic floor textures." },
 ];
 
 /* ============================================================
@@ -614,11 +615,19 @@ function hexToRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&2
 
 // stats
 const usedCats = new Set(MODS.map(m=>m.cat));
-const players = MODS.filter(m=>m.cat==="player").length;
 const statEls = document.querySelectorAll("#stats .num em");
+const statLbls = document.querySelectorAll("#stats .lbl");
 statEls[0].textContent = MODS.length;
 statEls[1].textContent = usedCats.size;
-statEls[2].textContent = players;
+// third stat = your biggest category (count + its label), so it's always meaningful
+const topCat = [...usedCats]
+  .map(k => ({ k, n: MODS.filter(m => m.cat === k).length }))
+  .sort((a,b) => b.n - a.n)[0];
+if(topCat){
+  statEls[2].textContent = topCat.n;
+  const lbl = (CATEGORIES.find(c => c.key === topCat.k) || {}).label || "Mods";
+  if(statLbls[2]) statLbls[2].textContent = lbl;
+}
 
 // render filter chips from CATEGORIES
 const filters = $("#filters");
