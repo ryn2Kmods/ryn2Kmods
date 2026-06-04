@@ -273,6 +273,28 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
 @media(max-width:860px){.addon-art{border-left:none;border-top:1px solid var(--line);min-height:220px}}
 .addon-art img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .addon-art .ph{font-family:'Anton';font-size:24px;color:rgba(255,255,255,.18);text-align:center;padding:24px;text-transform:uppercase;letter-spacing:1px}
+.addon-reqs{
+  margin-top:18px;font-size:13px;color:var(--muted);font-family:'Space Mono';
+  border-top:1px dashed var(--line);padding-top:16px;line-height:1.7;
+}
+.addon-reqs b{color:var(--cyan);font-weight:700}
+
+/* ---------- FAQ ---------- */
+.faq-list{display:flex;flex-direction:column;gap:12px;max-width:820px}
+.faq-item{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .2s;
+}
+.faq-item[open]{border-color:var(--amber)}
+.faq-item summary{
+  list-style:none;cursor:pointer;padding:20px 22px;font-weight:700;font-size:16px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{
+  content:"+";font-family:'Anton';font-size:24px;color:var(--amber);transition:transform .2s;line-height:1;
+}
+.faq-item[open] summary::after{transform:rotate(45deg)}
+.faq-item .ans{padding:0 22px 20px;color:var(--muted);font-size:14.5px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -284,6 +306,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
       <a href="#showcase">Mods</a>
       <a href="#addon">Addon</a>
       <a href="#updates">Updates</a>
+      <a href="#faq">FAQ</a>
       <a href="#purchase">Purchase</a>
       <button class="nav-cta" onclick="document.getElementById('purchase').scrollIntoView()">Buy on Ko-fi</button>
     </div>
@@ -330,6 +353,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
           <span class="addon-price" id="addonPrice"></span>
           <a class="btn btn-kofi" id="addonKofi" href="#" target="_blank" rel="noopener">☕ Get the addon</a>
         </div>
+        <div class="addon-reqs" id="addonReqs"></div>
       </div>
       <div class="addon-art">
         <div class="ph" id="addonArt">Add a screenshot of the addon in Blender</div>
@@ -345,6 +369,48 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
       <p>Release notes, new mods, and fixes. Newest at the top.</p>
     </div>
     <div class="feed" id="feed"></div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Frequently <span class="accent">Asked</span></h2>
+      <p>The quick answers. Still stuck? Reach me on Discord.</p>
+    </div>
+    <div class="faq-list">
+
+      <details class="faq-item">
+        <summary>Will your mods and addon work with NBA 2K27?</summary>
+        <div class="ans">Yes — I'm preparing everything for the NBA 2K27 release in September. Once the game is out I'll update the mods and the addon for it, and post the compatible versions here and on Ko-fi. Existing buyers get the 2K27-ready updates.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I receive my files after paying?</summary>
+        <div class="ans">Checkout runs through Ko-fi (paid via PayPal). After payment you get your download right away, along with install instructions. If anything doesn't arrive, message me on Discord and I'll sort it out.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How do I install a mod?</summary>
+        <div class="ans">Every mod comes with a short step-by-step guide. In general you'll drop the files into your NBA 2K mods folder using a mod manager. If you get stuck, send me a message on Discord and I'll walk you through it.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What do I need to use the Blender addon?</summary>
+        <div class="ans">See the Requirements listed in the addon section above — it shows the Blender version and the NBA 2K version it supports. If you're unsure whether your setup works, just ask before buying.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Do you offer refunds?</summary>
+        <div class="ans">Because these are digital files that can't be returned once downloaded, sales are generally final. If a file is broken or doesn't work as described, message me on Discord and I'll fix it or make it right.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can you make a custom mod or request?</summary>
+        <div class="ans">Sometimes, depending on my queue. Send me the details on Discord and I'll let you know if it's something I can do and what it would cost.</div>
+      </details>
+
+    </div>
   </div>
 </section>
 
@@ -470,6 +536,8 @@ const ADDON = {
   ],
   img:  "",                            // e.g. "images/addon.jpg"
   kofi: "",                            // e.g. "https://ko-fi.com/s/youraddon"
+  // Requirements line shown under the buy button. Edit the values to match.
+  requirements: "Requires Blender 4.2+ LTS · Works with NBA 2K26 · NBA 2K27 support coming soon",
 };
 
 /* ============================================================
@@ -500,6 +568,10 @@ document.getElementById("kofiLink").href = KOFI_LINK;
   $("#addonPitch").textContent = ADDON.pitch;
   const ul = $("#addonFeats");
   ADDON.features.forEach(f => { const li=document.createElement("li"); li.textContent=f; ul.appendChild(li); });
+  if(ADDON.requirements){
+    $("#addonReqs").innerHTML = "<b>Requirements</b><br>" +
+      ADDON.requirements.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  }
   const price = $("#addonPrice");
   price.textContent = free ? "Free" : ADDON.price;
   if(free) price.classList.add("free");
