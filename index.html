@@ -322,20 +322,27 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
 .addon-price.free{color:var(--cyan)}
 .addon-art{
   position:relative;min-height:320px;border-left:1px solid var(--line);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;
   background:
     repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 14px, transparent 14px 28px),
     linear-gradient(135deg,#101015,#1a1a22);
 }
-@media(max-width:860px){.addon-art{border-left:none;border-top:1px solid var(--line);min-height:220px}}
+@media(max-width:860px){.addon-art{border-left:none;border-top:1px solid var(--line);min-height:240px}}
+.addon-shot-wrap{position:relative;flex:1;display:flex;align-items:center;justify-content:center;padding:24px;min-height:0}
 .addon-art img{
-  position:absolute;inset:0;margin:auto;
-  max-width:calc(100% - 40px);max-height:calc(100% - 40px);
-  width:auto;height:auto;object-fit:contain;
+  max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
   border:1px solid #2f2f38;border-radius:10px;
   box-shadow:0 16px 44px rgba(0,0,0,.55);
 }
-.addon-art .ph{font-family:'Anton';font-size:24px;color:rgba(255,255,255,.18);text-align:center;padding:24px;text-transform:uppercase;letter-spacing:1px}
+.addon-tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 16px 22px}
+.addon-tabs button{
+  background:var(--panel);border:1px solid var(--line);color:var(--muted);
+  font-family:'Space Mono';font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:8px 18px;border-radius:50px;cursor:pointer;transition:all .2s;
+}
+.addon-tabs button:hover{color:var(--ink);border-color:var(--muted)}
+.addon-tabs button.active{background:var(--cyan);border-color:var(--cyan);color:#04201c}
+.addon-art .ph{font-family:'Anton';font-size:22px;color:rgba(255,255,255,.18);text-align:center;padding:24px;text-transform:uppercase;letter-spacing:1px}
 .addon-reqs{
   margin-top:18px;font-size:13px;color:var(--muted);font-family:'Space Mono';
   border-top:1px dashed var(--line);padding-top:16px;line-height:1.7;
@@ -421,7 +428,11 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
         <div class="addon-reqs" id="addonReqs"></div>
       </div>
       <div class="addon-art">
-        <div class="ph" id="addonArt">Add a screenshot of the addon in Blender</div>
+        <div class="addon-shot-wrap">
+          <img id="addonShot" alt="" hidden>
+          <div class="ph" id="addonArt">Add screenshots of the addon in Blender</div>
+        </div>
+        <div class="addon-tabs" id="addonTabs"></div>
       </div>
     </div>
   </div>
@@ -606,7 +617,13 @@ const ADDON = {
     "Handles cloth/net simulation meshes and smart arena instancing",
     "Regular updates and a quick-start install guide (PDF)",
   ],
-  img:  "images/blender.png",           // e.g. "images/addon.jpg"
+  img:  "images/blender.png",           // fallback used only if gallery below is empty
+  // Gallery tabs shown in the addon panel. Each = a highlighted label + its image.
+  // Add/remove freely. Drop the image files into your images/ folder.
+  gallery: [
+    { label:"Arena",  img:"images/blender.png" },
+    { label:"Player", img:"images/player.png" },
+  ],
   kofi: "https://ko-fi.com/ryn2kmods", // e.g. "https://ko-fi.com/s/youraddon"
   // Requirements line shown under the buy button. Edit the values to match.
   requirements: "Requires Blender 3.0+ (tested on 4.2+ LTS) · Works with NBA 2K26 · NBA 2K27 support coming soon",
@@ -656,7 +673,28 @@ if(HERO_BADGE && HERO_BADGE.trim()){
   const buy = $("#addonKofi");
   buy.href = ADDON.kofi || KOFI_LINK;
   buy.textContent = free ? "☕ Download free on Ko-fi" : "☕ Get the addon on Ko-fi";
-  if(ADDON.img){ $("#addonArt").outerHTML = `<img src="${ADDON.img}" alt="${ADDON.name}">`; }
+  // addon image gallery (labeled tabs)
+  const shot = $("#addonShot"), ph = $("#addonArt"), tabs = $("#addonTabs");
+  const gallery = (ADDON.gallery && ADDON.gallery.length) ? ADDON.gallery
+                : (ADDON.img ? [{ label:"Preview", img:ADDON.img }] : []);
+  if(gallery.length){
+    ph.style.display = "none";
+    shot.hidden = false;
+    const show = (i) => {
+      shot.src = gallery[i].img;
+      shot.alt = ADDON.name + " — " + gallery[i].label;
+      [...tabs.children].forEach((b, bi) => b.classList.toggle("active", bi === i));
+    };
+    if(gallery.length > 1){
+      gallery.forEach((g, i) => {
+        const b = document.createElement("button");
+        b.textContent = g.label;
+        b.onclick = () => show(i);
+        tabs.appendChild(b);
+      });
+    }
+    show(0);
+  }
 })();
 
 // helper: look up a category by key
