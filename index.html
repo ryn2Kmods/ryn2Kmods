@@ -328,7 +328,13 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
     linear-gradient(135deg,#101015,#1a1a22);
 }
 @media(max-width:860px){.addon-art{border-left:none;border-top:1px solid var(--line);min-height:220px}}
-.addon-art img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;padding:16px;background:#0c0c10}
+.addon-art img{
+  position:absolute;inset:0;margin:auto;
+  max-width:calc(100% - 40px);max-height:calc(100% - 40px);
+  width:auto;height:auto;object-fit:contain;
+  border:1px solid #2f2f38;border-radius:10px;
+  box-shadow:0 16px 44px rgba(0,0,0,.55);
+}
 .addon-art .ph{font-family:'Anton';font-size:24px;color:rgba(255,255,255,.18);text-align:center;padding:24px;text-transform:uppercase;letter-spacing:1px}
 .addon-reqs{
   margin-top:18px;font-size:13px;color:var(--muted);font-family:'Space Mono';
