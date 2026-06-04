@@ -74,6 +74,22 @@ nav{
   font-family:'Space Mono';color:var(--cyan);font-size:13px;letter-spacing:3px;text-transform:uppercase;
   opacity:0;animation:rise .7s .05s forwards;
 }
+.hero-badge{
+  display:none;align-items:center;gap:10px;margin-top:16px;
+  background:rgba(255,138,30,.10);border:1px solid rgba(255,138,30,.4);
+  color:var(--amber-soft);font-family:'Space Mono';font-size:12.5px;font-weight:700;letter-spacing:.5px;
+  padding:8px 15px;border-radius:50px;width:fit-content;max-width:100%;
+  opacity:0;animation:rise .8s .2s forwards;
+}
+.hero-badge .pdot{
+  width:9px;height:9px;border-radius:50%;background:var(--amber);flex:none;
+  box-shadow:0 0 0 0 rgba(255,138,30,.6);animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,138,30,.5)}
+  70%{box-shadow:0 0 0 9px rgba(255,138,30,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,138,30,0)}
+}
 .hero h1{
   font-family:'Anton';font-weight:400;line-height:.92;letter-spacing:.5px;
   font-size:clamp(56px,12vw,140px);margin:14px 0 18px;text-transform:uppercase;
@@ -316,6 +332,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
 <header class="hero">
   <div class="wrap">
     <div class="kicker">// Custom NBA 2K Modding</div>
+    <div class="hero-badge" id="heroBadge"><span class="pdot"></span><span id="heroBadgeText"></span></div>
     <h1><span>Next-Level</span><span class="stroke">NBA 2K Mods</span></h1>
     <p class="lede">Player faces, full-body detail, custom courts, and realistic arena lighting &amp; ads — plus the Blender addon that powers them all. Built for 2K modders, available on Ko-fi.</p>
     <div class="hero-actions">
@@ -482,6 +499,10 @@ const KOFI_LINK = "https://ko-fi.com/ryn2kmods";           // your main Ko-fi pa
 //   Each mod uses this link by default. To send a mod to its OWN Ko-fi
 //   shop item instead, add a "kofi" field to that mod below.
 
+// Banner pill in the hero. Set to "" to hide it.
+// When 2K27 launches in September, change this to e.g. "NBA 2K27 Ready".
+const HERO_BADGE = "NBA 2K26 MODS · NBA 2K27 MODS";
+
 /* ============================================================
    2) EDIT YOUR CATEGORIES HERE
    - key:   short id used by each mod's "cat" field (no spaces)
@@ -537,7 +558,7 @@ const ADDON = {
   img:  "",                            // e.g. "images/addon.jpg"
   kofi: "",                            // e.g. "https://ko-fi.com/s/youraddon"
   // Requirements line shown under the buy button. Edit the values to match.
-  requirements: "Requires Blender 4.2+ LTS · Works with NBA 2K26 · NBA 2K27 support coming soon",
+  requirements: "Requires Blender 4.0+ · Works with NBA 2K25 & 2K26 · NBA 2K27 support coming at September release",
 };
 
 /* ============================================================
@@ -559,6 +580,12 @@ document.getElementById("yr").textContent = new Date().getFullYear();
 document.getElementById("handleText").textContent = DISCORD_USERNAME;
 document.getElementById("discordLink").href = DISCORD_LINK;
 document.getElementById("kofiLink").href = KOFI_LINK;
+
+// hero badge
+if(HERO_BADGE && HERO_BADGE.trim()){
+  $("#heroBadgeText").textContent = HERO_BADGE;
+  $("#heroBadge").style.display = "inline-flex";
+}
 
 // addon feature section
 (function(){
