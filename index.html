@@ -223,6 +223,14 @@ nav.scrolled{background:rgba(10,10,12,.92);box-shadow:0 12px 40px rgba(0,0,0,.5)
   padding:5px 10px;border-radius:5px;color:var(--ink);
   background:rgba(10,10,12,.7);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(4px);
 }
+/* "Popular" pill — flag your best sellers with popular:true */
+.tag-popular{
+  display:inline-flex;align-items:center;gap:5px;width:fit-content;margin-bottom:10px;
+  font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--amber);background:rgba(255,138,30,.12);border:1px solid rgba(255,138,30,.45);
+  padding:4px 10px;border-radius:50px;
+}
+.tag-popular .pstar{font-size:12px;line-height:1}
 /* empty state when a filter has no mods */
 .grid-empty{
   grid-column:1/-1;text-align:center;color:var(--muted);font-size:15px;
@@ -687,9 +695,11 @@ const GAMES = [
    - price: e.g. "$8", or "Free"
    - kofi: OPTIONAL. A direct Ko-fi link for THIS mod. Omit it and the
            mod uses your main KOFI_LINK above.
+   - popular: OPTIONAL. Add  popular:true  to show a "★ Popular" badge on
+              that mod's card. Put it on your best sellers; remove to hide.
    ============================================================ */
 const MODS = [
-  { name:"Broadcast Realism Lighting Overhaul",    cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Full lighting overhaul tuned for true-to-broadcast realism on every court.",        kofi:"https://ko-fi.com/s/ed9b44cabd" },
+  { name:"Broadcast Realism Lighting Overhaul",    cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Full lighting overhaul tuned for true-to-broadcast realism on every court.",        popular:true, kofi:"https://ko-fi.com/s/ed9b44cabd" },
   { name:"Immersive Lighting",                     cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Deeper, more atmospheric arena lighting for a more immersive look.",                 kofi:"https://ko-fi.com/s/69eec36aca" },
   { name:"ESPN-Style Lighting Overhaul",           cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Lighting styled after ESPN broadcasts for an authentic TV feel.",                   kofi:"https://ko-fi.com/s/421c4cfc38" },
   { name:"Cinematic Hybrid Real-Shadow Lighting",  cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Cinematic hybrid lighting with realistic shadow detail.",                           kofi:"https://ko-fi.com/s/aa378b0b32" },
@@ -926,11 +936,13 @@ function render(){
       ? `<img src="${m.img}" alt="${m.name}">`
       : `<div class="ph">${m.name}</div>`;
     const free = m.price.toLowerCase()==="free";
+    const popular = m.popular ? `<div class="tag-popular"><span class="pstar">★</span> Popular</div>` : "";
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
       <div class="thumb">${thumb}<span class="badge" style="${badgeStyle}">${c.label}</span>${gameBadge}</div>
       <div class="card-body">
+        ${popular}
         <h3>${m.name}</h3>
         <div class="desc">${m.desc}</div>
         <div class="card-foot">
