@@ -4,6 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ryn2Kmods — NBA 2K Player, Body, Court & Lighting Mods</title>
+
+<!-- ============================================================
+     SHARE PREVIEW + FAVICON  (live URL is set below)
+     If your site address ever changes, update the og:url and
+     image URLs to match.
+     ============================================================ -->
+<meta name="description" content="Custom NBA 2K26 player, court, and lighting mods — plus the Blender addon that builds them. Available on Ko-fi.">
+
+<!-- Open Graph (Discord, Facebook, etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ryn2Kmods">
+<meta property="og:title" content="ryn2Kmods — NBA 2K Mods & Blender Addon">
+<meta property="og:description" content="Custom NBA 2K26 player, court, and lighting mods — plus the Blender addon that builds them. Available on Ko-fi.">
+<meta property="og:url" content="https://ryn2kmods.github.io/ryn2Kmods/">
+<meta property="og:image" content="https://ryn2kmods.github.io/ryn2Kmods/images/cover.jpg">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ryn2Kmods — NBA 2K Mods & Blender Addon">
+<meta name="twitter:description" content="Custom NBA 2K26 player, court, and lighting mods — plus the Blender addon that builds them. Available on Ko-fi.">
+<meta name="twitter:image" content="https://ryn2kmods.github.io/ryn2Kmods/images/cover.jpg">
+
+<!-- Favicon (browser tab + saved-to-phone icon) -->
+<link rel="icon" type="image/jpeg" href="images/cover.jpg">
+<link rel="apple-touch-icon" href="images/cover.jpg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -562,7 +588,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
    1) EDIT YOUR CONTACT + PURCHASE INFO HERE
    ============================================================ */
 const DISCORD_USERNAME = "ryn2kmods";                      // shown on the site
-const DISCORD_LINK     = "https://discord.com/users/000000000000000000";
+const DISCORD_LINK     = "https://discord.gg/k9YBkfwc";
 // ^ Replace with EITHER your profile link (discord.com/users/<your-id>)
 //   OR a server invite (https://discord.gg/xxxxxx).
 
@@ -639,11 +665,10 @@ const ADDON = {
     { label:"Shoes",  img:"images/shoes.png" },
     { label:"Jersey", img:"images/jersey.png" },
     { label:"Shorts", img:"images/shorts.png" },
-	{ label:"Accessories", img:"images/accessories.png" },
   ],
   // Tag row under the features — the full range of models the addon handles.
   // Add or remove freely; each becomes a labeled chip.
-  supports: [],
+  supports: ["Players","Arenas","Shoes","Jerseys","Shorts","Hair","Beards","Headbands","Backpacks","Accessories"],
   kofi: "https://ko-fi.com/ryn2kmods", // e.g. "https://ko-fi.com/s/youraddon"
   // Requirements line shown under the buy button. Edit the values to match.
   requirements: "Requires Blender 3.0+ (tested on 4.2+ LTS) · Works with NBA 2K26 · NBA 2K27 support coming soon",
