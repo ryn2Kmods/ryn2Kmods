@@ -192,6 +192,27 @@ nav.scrolled{background:rgba(10,10,12,.92);box-shadow:0 12px 40px rgba(0,0,0,.5)
 }
 .chip:hover{color:var(--ink);border-color:var(--muted)}
 .chip.active{background:var(--amber);border-color:var(--amber);color:#180c00}
+/* game-version toggle (segmented control) */
+.game-toggle{display:inline-flex;gap:4px;margin-bottom:18px;background:var(--panel);border:1px solid var(--line);border-radius:50px;padding:4px}
+.game-toggle button{
+  background:transparent;border:none;color:var(--muted);
+  font-family:'Space Mono';font-weight:700;font-size:13px;letter-spacing:.5px;
+  padding:8px 18px;border-radius:50px;cursor:pointer;transition:background .2s, color .2s;
+}
+.game-toggle button:hover{color:var(--ink)}
+.game-toggle button.active{background:var(--ink);color:#0a0a0c}
+/* per-card game badge (top-right) */
+.gbadge{
+  position:absolute;top:12px;right:12px;font-family:'Space Mono';font-size:11px;letter-spacing:.5px;font-weight:700;
+  padding:5px 10px;border-radius:5px;color:var(--ink);
+  background:rgba(10,10,12,.7);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(4px);
+}
+/* empty state when a filter has no mods */
+.grid-empty{
+  grid-column:1/-1;text-align:center;color:var(--muted);font-size:15px;
+  border:1px dashed var(--line);border-radius:14px;padding:48px 24px;
+}
+.grid-empty strong{display:block;color:var(--ink);font-family:'Anton';font-size:24px;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px}
 .card{
   background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
@@ -443,6 +464,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
       <h2>The Mods <span class="accent">Collection</span></h2>
       <p>Every mod is tested in-game and comes with install instructions. Tap a card to start a purchase.</p>
     </div>
+    <div class="game-toggle" id="gameToggle"></div>
     <div class="filters" id="filters"></div>
     <div class="grid" id="grid"></div>
   </div>
@@ -618,23 +640,33 @@ const CATEGORIES = [
 ];
 
 /* ============================================================
+   2b) GAME VERSIONS — the All / 2K26 / 2K27 toggle
+   Each mod has a "game" key that must match one of these.
+   Remove the 2k27 line if you don't want that tab showing yet.
+   ============================================================ */
+const GAMES = [
+  { key:"2k26", label:"NBA 2K26", short:"2K26" },
+  { key:"2k27", label:"NBA 2K27", short:"2K27" },
+];
+
+/* ============================================================
    3) EDIT YOUR MODS HERE
-   - cat: must match a category "key" above (e.g. "player")
+   - cat:  must match a category "key" above (e.g. "lighting")
+   - game: which game version — "2k26" or "2k27" (matches GAMES above)
    - img: optional URL/path to a screenshot. Leave "" for a styled placeholder.
    - price: e.g. "$8", or "Free"
    - kofi: OPTIONAL. A direct Ko-fi link for THIS mod. Omit it and the
-           mod uses your main KOFI_LINK above. Example:
-           { name:"...", cat:"player", price:"$8", kofi:"https://ko-fi.com/s/abc123", ... }
+           mod uses your main KOFI_LINK above.
    ============================================================ */
 const MODS = [
-  { name:"Broadcast Realism Lighting Overhaul",    cat:"lighting", price:"$7", img:"images/cover.jpg", desc:"Full lighting overhaul tuned for true-to-broadcast realism on every court.",        kofi:"https://ko-fi.com/s/ed9b44cabd" },
-  { name:"Immersive Lighting",                     cat:"lighting", price:"$7", img:"images/cover.jpg", desc:"Deeper, more atmospheric arena lighting for a more immersive look.",                 kofi:"https://ko-fi.com/s/69eec36aca" },
-  { name:"ESPN-Style Lighting Overhaul",           cat:"lighting", price:"$7", img:"images/cover.jpg", desc:"Lighting styled after ESPN broadcasts for an authentic TV feel.",                   kofi:"https://ko-fi.com/s/421c4cfc38" },
-  { name:"Cinematic Hybrid Real-Shadow Lighting",  cat:"lighting", price:"$7", img:"images/cover.jpg", desc:"Cinematic hybrid lighting with realistic shadow detail.",                           kofi:"https://ko-fi.com/s/aa378b0b32" },
-  { name:"Cinematic Hybrid Broadcast Lighting",    cat:"lighting", price:"$7", img:"images/cover.jpg", desc:"Cinematic hybrid lighting tuned for a polished broadcast look.",                    kofi:"https://ko-fi.com/s/81abd0f0f8" },
-  { name:"Hybrid Court (Local Broadcast)",         cat:"court",    price:"$7", img:"images/cover.jpg", desc:"Custom hybrid court with a local-broadcast presentation and realistic floor textures.", kofi:"https://ko-fi.com/s/84c074b448" },
-  { name:"Hybrid City Court",                      cat:"court",    price:"$6", img:"images/cover.jpg", desc:"City-themed hybrid court with updated ads and realistic textures.",                  kofi:"https://ko-fi.com/s/b0a807dc41" },
-  { name:"Hybrid Classic Court",                   cat:"court",    price:"$3", img:"images/cover.jpg", desc:"Classic-style hybrid court with throwback design and realistic floor textures.",    kofi:"https://ko-fi.com/s/432d7e2645" },
+  { name:"Broadcast Realism Lighting Overhaul",    cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Full lighting overhaul tuned for true-to-broadcast realism on every court.",        kofi:"https://ko-fi.com/s/ed9b44cabd" },
+  { name:"Immersive Lighting",                     cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Deeper, more atmospheric arena lighting for a more immersive look.",                 kofi:"https://ko-fi.com/s/69eec36aca" },
+  { name:"ESPN-Style Lighting Overhaul",           cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Lighting styled after ESPN broadcasts for an authentic TV feel.",                   kofi:"https://ko-fi.com/s/421c4cfc38" },
+  { name:"Cinematic Hybrid Real-Shadow Lighting",  cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Cinematic hybrid lighting with realistic shadow detail.",                           kofi:"https://ko-fi.com/s/aa378b0b32" },
+  { name:"Cinematic Hybrid Broadcast Lighting",    cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Cinematic hybrid lighting tuned for a polished broadcast look.",                    kofi:"https://ko-fi.com/s/81abd0f0f8" },
+  { name:"Hybrid Court (Local Broadcast)",         cat:"court",    game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Custom hybrid court with a local-broadcast presentation and realistic floor textures.", kofi:"https://ko-fi.com/s/84c074b448" },
+  { name:"Hybrid City Court",                      cat:"court",    game:"2k26", price:"$6", img:"images/cover.jpg", desc:"City-themed hybrid court with updated ads and realistic textures.",                  kofi:"https://ko-fi.com/s/b0a807dc41" },
+  { name:"Hybrid Classic Court",                   cat:"court",    game:"2k26", price:"$3", img:"images/cover.jpg", desc:"Classic-style hybrid court with throwback design and realistic floor textures.",    kofi:"https://ko-fi.com/s/432d7e2645" },
 ];
 
 /* ============================================================
@@ -768,24 +800,73 @@ if(topCat){
   if(statLbls[2]) statLbls[2].textContent = lbl;
 }
 
-// render filter chips from CATEGORIES
+// gameMap for short labels
+const gameMap = Object.fromEntries(GAMES.map(g => [g.key, g]));
+
+// active filter state
+let activeGame = "all";
+let activeCat  = "all";
+
+// render category chips from CATEGORIES
 const filters = $("#filters");
 [{key:"all",label:"All"}, ...CATEGORIES].forEach((c,i)=>{
   const b = document.createElement("button");
   b.className = "chip" + (i===0 ? " active" : "");
   b.dataset.cat = c.key;
   b.textContent = c.label;
+  b.onclick = () => {
+    activeCat = c.key;
+    document.querySelectorAll("#filters .chip").forEach(x=>{
+      x.classList.remove("active");
+      x.style.background=""; x.style.borderColor=""; x.style.color="";
+    });
+    b.classList.add("active");
+    if(c.color){ b.style.background=c.color; b.style.borderColor=c.color; b.style.color="#180c00"; }
+    render();
+  };
   filters.appendChild(b);
 });
 
-// render cards
+// render game toggle (All / 2K26 / 2K27)
+const gameToggle = $("#gameToggle");
+[{key:"all",short:"All"}, ...GAMES].forEach((g,i)=>{
+  const b = document.createElement("button");
+  b.className = (i===0 ? "active" : "");
+  b.dataset.game = g.key;
+  b.textContent = g.short;
+  b.onclick = () => {
+    activeGame = g.key;
+    [...gameToggle.children].forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    render();
+  };
+  gameToggle.appendChild(b);
+});
+
+// render cards (filters by BOTH game and category)
 const grid = $("#grid");
-function renderCards(cat){
+function render(){
   grid.innerHTML = "";
-  MODS.filter(m => cat==="all" || m.cat===cat).forEach(m=>{
+  const list = MODS.filter(m =>
+    (activeGame==="all" || m.game===activeGame) &&
+    (activeCat==="all"  || m.cat===activeCat)
+  );
+  if(!list.length){
+    const g = gameMap[activeGame];
+    const msg = document.createElement("div");
+    msg.className = "grid-empty";
+    msg.innerHTML = g
+      ? `<strong>${g.label} mods coming soon</strong>Drops land here at launch — follow along on Discord for the release.`
+      : `<strong>Nothing here yet</strong>Try a different filter.`;
+    grid.appendChild(msg);
+    return;
+  }
+  list.forEach(m=>{
     const c = catMap[m.cat] || {label:m.cat, color:"#8a8a96"};
     const [r,g,bl] = hexToRgb(c.color);
     const badgeStyle = `color:${c.color};border-color:rgba(${r},${g},${bl},.4);background:rgba(${r},${g},${bl},.12)`;
+    const gb = gameMap[m.game];
+    const gameBadge = gb ? `<span class="gbadge">${gb.short}</span>` : "";
     const thumb = m.img
       ? `<img src="${m.img}" alt="${m.name}">`
       : `<div class="ph">${m.name}</div>`;
@@ -793,7 +874,7 @@ function renderCards(cat){
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
-      <div class="thumb">${thumb}<span class="badge" style="${badgeStyle}">${c.label}</span></div>
+      <div class="thumb">${thumb}<span class="badge" style="${badgeStyle}">${c.label}</span>${gameBadge}</div>
       <div class="card-body">
         <h3>${m.name}</h3>
         <div class="desc">${m.desc}</div>
@@ -806,21 +887,7 @@ function renderCards(cat){
     grid.appendChild(card);
   });
 }
-renderCards("all");
-
-// filters
-document.querySelectorAll(".chip").forEach(c=>{
-  c.onclick = () => {
-    document.querySelectorAll(".chip").forEach(x=>{
-      x.classList.remove("active");
-      x.style.background=""; x.style.borderColor=""; x.style.color="";
-    });
-    c.classList.add("active");
-    const col = (catMap[c.dataset.cat]||{}).color;
-    if(col){ c.style.background=col; c.style.borderColor=col; c.style.color="#180c00"; }
-    renderCards(c.dataset.cat);
-  };
-});
+render();
 
 // updates feed
 const feed = $("#feed");
