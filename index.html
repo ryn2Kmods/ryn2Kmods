@@ -151,6 +151,22 @@ nav.scrolled{background:rgba(10,10,12,.92);box-shadow:0 12px 40px rgba(0,0,0,.5)
   70%{box-shadow:0 0 0 9px rgba(255,138,30,0)}
   100%{box-shadow:0 0 0 0 rgba(255,138,30,0)}
 }
+.hero-flags{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.countdown{
+  display:none;align-items:center;gap:8px;margin-top:16px;
+  background:rgba(38,224,200,.08);border:1px solid rgba(38,224,200,.4);
+  color:var(--cyan);font-family:'Space Mono';font-size:12.5px;font-weight:700;letter-spacing:.5px;
+  padding:8px 15px;border-radius:50px;width:fit-content;max-width:100%;
+  opacity:0;animation:rise .8s .26s forwards;
+}
+.countdown b{color:var(--ink)}
+.social-proof{
+  display:none;align-items:center;gap:8px;margin-top:22px;
+  color:var(--ink);font-size:14px;font-weight:600;
+  opacity:0;animation:rise .8s .52s forwards;
+}
+.social-proof .star{color:var(--amber);font-size:15px}
+.social-proof span{color:var(--muted);font-weight:500}
 .hero h1{
   font-family:'Anton';font-weight:400;line-height:.92;letter-spacing:.5px;
   font-size:clamp(56px,12vw,140px);margin:14px 0 18px;text-transform:uppercase;
@@ -443,13 +459,17 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
 <header class="hero">
   <div class="wrap">
     <div class="kicker">// Custom NBA 2K Modding</div>
-    <div class="hero-badge" id="heroBadge"><span class="pdot"></span><span id="heroBadgeText"></span></div>
+    <div class="hero-flags">
+      <div class="hero-badge" id="heroBadge"><span class="pdot"></span><span id="heroBadgeText"></span></div>
+      <div class="countdown" id="countdown" hidden></div>
+    </div>
     <h1><span>Next-Level</span><span class="stroke">NBA 2K Mods</span></h1>
     <p class="lede">Player faces, full-body detail, custom courts, and realistic arena lighting &amp; ads — plus the Blender addon that powers them all. Built for 2K modders, available on Discord and Ko-fi.</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="#showcase">Browse the mods →</a>
       <a class="btn btn-ghost" href="#addon">Get the Blender addon</a>
     </div>
+    <div class="social-proof" id="socialProof" hidden></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="num"><em>—</em></div><div class="lbl">Mods Released</div></div>
       <div class="stat"><div class="num"><em>—</em></div><div class="lbl">Categories</div></div>
@@ -623,6 +643,16 @@ const KOFI_LINK = "https://ko-fi.com/ryn2kmods";           // your main Ko-fi pa
 // When 2K27 launches in September, change this to e.g. "NBA 2K27 Ready".
 const HERO_BADGE = "NBA 2K26 MODS · NBA 2K27 MODS";
 
+// Countdown pill in the hero. Set COUNTDOWN_DATE to NBA 2K27's official
+// release date (YYYY-MM-DD) once 2K announces it — then the pill appears.
+// Left empty on purpose for now (no official date yet) = countdown hidden.
+const COUNTDOWN_DATE  = "";
+const COUNTDOWN_LABEL = "NBA 2K27 mods drop in";   // shown before the day count
+const COUNTDOWN_DONE  = "🏀 NBA 2K27 mods are dropping now!"; // shown once the date arrives
+
+// Small trust line under the hero buttons. Set to "" to hide it.
+const SOCIAL_PROOF = "Trusted by 160+ supporters on Ko-fi";
+
 /* ============================================================
    2) EDIT YOUR CATEGORIES HERE
    - key:   short id used by each mod's "cat" field (no spaces)
@@ -698,9 +728,9 @@ const ADDON = {
     { label:"Jersey", img:"images/jersey.png" },
     { label:"Shorts", img:"images/shorts.png" },
   ],
-  // Tag row under the features — the full range of models the addon handles.
-  // Add or remove freely; each becomes a labeled chip.
-  supports: ["Players","Arenas","Shoes","Jerseys","Shorts","Hair","Beards","Headbands","Backpacks","Accessories"],
+  // Supported-models tag row. Left empty on purpose (the addon imports any
+  // 2K model, so the list isn't needed). Add items here only if you want it back.
+  supports: [],
   kofi: "https://ko-fi.com/ryn2kmods", // e.g. "https://ko-fi.com/s/youraddon"
   // Requirements line shown under the buy button. Edit the values to match.
   requirements: "Requires Blender 3.0+ (tested on 4.2+ LTS) · Works with NBA 2K26 · NBA 2K27 support coming soon",
@@ -711,10 +741,10 @@ const ADDON = {
    - tag: "New", "Fix", "Update", etc.
    ============================================================ */
 const UPDATES = [
-  { ver:"v2.4", date:"May 28, 2026", tag:"New",    title:"Realistic Arena Lighting & Ads update released", body:"Reworked basket and arena ads with true-to-broadcast lighting. Available now on Ko-fi." },
-  { ver:"v2.3", date:"May 10, 2026", tag:"Update", title:"NBA 2K Blender pipeline upgrade", body:"Rebuilt my exporter for cleaner normals and faster turnaround on every mod. Future drops will look sharper." },
-  { ver:"v2.2", date:"Apr 22, 2026", tag:"Fix",    title:"Realistic Global update", body:"Patched seam issues on the Realistic Body & Sweat Pack. Re-download free if you bought before this date." },
-  { ver:"v2.1", date:"Apr 02, 2026", tag:"New",    title:"Custom Court — Latest Ads released", body:"My first custom court with updated ads and realistic floor textures." },
+  { ver:"—", date:"Coming soon", tag:"Coming Soon", title:"NBA 2K27 mods in the works", body:"Prepping the full lineup — lighting, courts, and more — for the NBA 2K27 launch. Follow on Discord for the drop." },
+  { ver:"v2.1.1", date:"May 28, 2026", tag:"Update", title:"NBA 2K Blender Addon updated", body:"Latest addon build with cleaner exports and the 'Check Export Accuracy' tool. Existing buyers get the update." },
+  { ver:"—", date:"May 10, 2026", tag:"New", title:"Hybrid Court trio released", body:"Local Broadcast, City, and Classic courts — custom designs with realistic floor textures. Available now on Ko-fi." },
+  { ver:"—", date:"Apr 22, 2026", tag:"New", title:"Five 2K26 lighting mods live", body:"Broadcast Realism, Immersive, ESPN-Style, and two Cinematic Hybrid lighting overhauls dropped for NBA 2K26." },
 ];
 
 /* ============================================================
@@ -730,6 +760,30 @@ document.getElementById("kofiLink").href = KOFI_LINK;
 if(HERO_BADGE && HERO_BADGE.trim()){
   $("#heroBadgeText").textContent = HERO_BADGE;
   $("#heroBadge").style.display = "inline-flex";
+}
+
+// social proof line
+if(SOCIAL_PROOF && SOCIAL_PROOF.trim()){
+  const sp = $("#socialProof");
+  sp.innerHTML = `<span class="star">★★★★★</span> ` + SOCIAL_PROOF.replace(/</g,"&lt;");
+  sp.style.display = "flex";
+}
+
+// 2K27 countdown
+if(COUNTDOWN_DATE && COUNTDOWN_DATE.trim()){
+  const cd = $("#countdown");
+  const target = new Date(COUNTDOWN_DATE + "T00:00:00");
+  const dayMs = 86400000;
+  const days = Math.ceil((target - new Date()) / dayMs);
+  if(isNaN(target.getTime())){
+    // bad date — leave hidden
+  } else if(days > 0){
+    cd.innerHTML = `⏳ ${COUNTDOWN_LABEL} <b>${days} day${days===1?"":"s"}</b>`;
+    cd.style.display = "inline-flex";
+  } else {
+    cd.innerHTML = COUNTDOWN_DONE.replace(/</g,"&lt;");
+    cd.style.display = "inline-flex";
+  }
 }
 
 // addon feature section
