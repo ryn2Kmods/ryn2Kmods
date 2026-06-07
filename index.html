@@ -4,450 +4,709 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ryn2Kmods — NBA 2K Player, Body, Court & Lighting Mods</title>
-
-<!-- ============================================================
-     SHARE PREVIEW + FAVICON  (live URL is set below)
-     If your site address ever changes, update the og:url and
-     image URLs to match.
-     ============================================================ -->
 <meta name="description" content="Custom NBA 2K26 player, court, and lighting mods — plus the Blender addon that builds them. Available on Ko-fi.">
-
-<!-- Open Graph (Discord, Facebook, etc.) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ryn2Kmods">
 <meta property="og:title" content="ryn2Kmods — NBA 2K Mods & Blender Addon">
 <meta property="og:description" content="Custom NBA 2K26 player, court, and lighting mods — plus the Blender addon that builds them. Available on Ko-fi.">
 <meta property="og:url" content="https://ryn2kmods.github.io/ryn2Kmods/">
 <meta property="og:image" content="https://ryn2kmods.github.io/ryn2Kmods/images/cover.jpg">
-
-<!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ryn2Kmods — NBA 2K Mods & Blender Addon">
 <meta name="twitter:description" content="Custom NBA 2K26 player, court, and lighting mods — plus the Blender addon that builds them. Available on Ko-fi.">
 <meta name="twitter:image" content="https://ryn2kmods.github.io/ryn2Kmods/images/cover.jpg">
-
-<!-- Favicon (browser tab + saved-to-phone icon) -->
 <link rel="icon" type="image/jpeg" href="images/cover.jpg">
 <link rel="apple-touch-icon" href="images/cover.jpg">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   EDIT YOUR CONTACT INFO IN THE <script> AT THE BOTTOM
-   (Discord handle, invite link, mods, and updates live there)
+   PREMIUM COLOR SYSTEM
    ============================================================ */
 :root{
-  --bg:#0a0a0c;
-  --bg-2:#111114;
-  --panel:#16161b;
-  --line:#26262e;
-  --ink:#f4f1ea;
-  --muted:#8a8a96;
-  --amber:#ff8a1e;        /* hardwood */
-  --amber-soft:#ffae5e;
-  --cyan:#26e0c8;         /* arena lights */
-  --court:rgba(255,138,30,.10);
+  --bg:#080809;
+  --bg-2:#0d0d11;
+  --panel:rgba(15,15,19,0.88);
+  --line:rgba(255,255,255,0.07);
+  --ink:#f8f5ef;
+  --muted:#7c7c88;
+  --amber:#c9a84c;
+  --amber-soft:#dfc07a;
+  --cyan:#1ec8b0;
+  --court:rgba(201,168,76,.08);
+  --gold-grad:linear-gradient(135deg,#b8922a 0%,#f0d882 42%,#c9a84c 62%,#9a7020 100%);
+  --gold-text:linear-gradient(125deg,#a07820 0%,#f5e090 44%,#c9a84c 68%,#886015 100%);
+  --line-gold:rgba(201,168,76,0.20);
 }
+
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
   background:var(--bg);
   color:var(--ink);
-  font-family:'Archivo',sans-serif;
-  line-height:1.5;
+  font-family:'DM Sans',sans-serif;
+  line-height:1.55;
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }
+
+/* ── SCROLL PROGRESS BAR ── */
+#prog{
+  position:fixed;top:0;left:0;width:0%;height:3px;z-index:300;
+  background:var(--gold-grad);
+  box-shadow:0 0 12px rgba(201,168,76,.5);
+  transition:width .08s linear;
+  pointer-events:none;
+}
+
 /* court-line grid */
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    repeating-linear-gradient(0deg, transparent 0 40px, rgba(255,255,255,.022) 40px 41px),
-    repeating-linear-gradient(90deg, transparent 0 40px, rgba(255,255,255,.015) 40px 41px);
-  mask-image:radial-gradient(120% 120% at 50% 0%, #000 55%, transparent 100%);
-  -webkit-mask-image:radial-gradient(120% 120% at 50% 0%, #000 55%, transparent 100%);
+    repeating-linear-gradient(0deg,  transparent 0 48px, rgba(255,255,255,.016) 48px 49px),
+    repeating-linear-gradient(90deg, transparent 0 48px, rgba(255,255,255,.011) 48px 49px);
+  mask-image:radial-gradient(110% 70% at 50% 0%,#000 40%,transparent 100%);
+  -webkit-mask-image:radial-gradient(110% 70% at 50% 0%,#000 40%,transparent 100%);
 }
+
+/* grain overlay */
 body::after{
-  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.45;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.038'/%3E%3C/svg%3E");
 }
+
 .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 24px}
 
 /* animated arena-glow backdrop */
 .bg-fx{
   position:fixed;inset:-12%;z-index:0;pointer-events:none;
   background:
-    radial-gradient(620px 480px at 78% 6%, rgba(38,224,200,.18), transparent 60%),
-    radial-gradient(720px 560px at 14% 96%, rgba(255,138,30,.20), transparent 62%),
-    radial-gradient(500px 500px at 95% 80%, rgba(38,224,200,.10), transparent 60%);
+    radial-gradient(700px 500px at 78% 5%,  rgba(30,200,176,.10),  transparent 60%),
+    radial-gradient(820px 620px at 10% 96%, rgba(201,168,76,.14),  transparent 62%),
+    radial-gradient(500px 500px at 95% 78%, rgba(30,200,176,.07),  transparent 60%);
   animation:bgdrift 26s ease-in-out infinite alternate;
   will-change:transform;
 }
 @keyframes bgdrift{
-  0%{transform:translate3d(-1.5%,0,0) scale(1)}
-  50%{transform:translate3d(1.5%,-2%,0) scale(1.07)}
+  0%  {transform:translate3d(-1.5%,0,0)  scale(1)}
+  50% {transform:translate3d(1.5%,-2%,0) scale(1.07)}
   100%{transform:translate3d(-1%,1.5%,0) scale(1.03)}
 }
 
 /* scroll reveal */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .72s cubic-bezier(.2,.7,.2,1),transform .72s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
   .bg-fx{animation:none}
 }
 
-/* ---------- NAV ---------- */
+/* ── SECTION DIVIDER ── */
+.sec-divider{
+  position:relative;z-index:1;
+  display:flex;align-items:center;
+  max-width:1180px;margin:0 auto;padding:0 24px;
+}
+.sec-divider::before,.sec-divider::after{
+  content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line-gold),transparent);
+}
+.sec-divider span{padding:0 18px;color:var(--amber);font-size:12px;opacity:.6;line-height:1}
+
+/* ============================================================
+   NAV — 52 px ultra-thin
+   ============================================================ */
 nav{
-  position:sticky;top:0;z-index:50;
-  backdrop-filter:blur(12px);
-  background:rgba(10,10,12,.72);
+  position:sticky;top:0;z-index:50;height:52px;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  background:rgba(8,8,9,.76);
   border-bottom:1px solid var(--line);
-  transition:background .3s, box-shadow .3s, border-color .3s;
+  transition:background .3s,box-shadow .3s,border-color .3s;
 }
-nav.scrolled{background:rgba(10,10,12,.92);box-shadow:0 12px 40px rgba(0,0,0,.5);border-bottom-color:#33333d}
-.nav-in{display:flex;align-items:center;justify-content:space-between;height:68px}
-.brand{display:flex;align-items:center;gap:10px;font-family:'Anton';font-size:24px;letter-spacing:.5px}
+nav.scrolled{
+  background:rgba(8,8,9,.96);
+  box-shadow:0 16px 48px rgba(0,0,0,.65);
+  border-bottom-color:var(--line-gold);
+}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:52px}
+.brand{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2.5px;text-transform:uppercase;
+}
 .brand .dot{color:var(--amber)}
-.nav-links{display:flex;gap:28px;align-items:center}
-.nav-links a{color:var(--muted);text-decoration:none;font-weight:600;font-size:14px;letter-spacing:.3px;transition:color .2s}
-.nav-links a:hover{color:var(--ink)}
-.nav-cta{
-  background:var(--amber);color:#180c00;padding:10px 18px;border-radius:6px;
-  font-weight:700;font-size:14px;border:none;cursor:pointer;transition:transform .15s, box-shadow .2s;
+.nav-links{display:flex;gap:26px;align-items:center}
+.nav-links a{
+  color:var(--muted);text-decoration:none;
+  font-family:'DM Sans';font-weight:500;font-size:13px;letter-spacing:.4px;
+  transition:color .2s;
 }
-.nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,138,30,.35)}
+.nav-links a:hover{color:var(--ink)}
+
+/* shimmer pill CTA */
+.nav-cta{
+  position:relative;overflow:hidden;
+  background:var(--gold-grad);color:#180c00;
+  padding:7px 20px;border-radius:50px;
+  font-family:'DM Sans';font-weight:700;font-size:13px;letter-spacing:.3px;
+  border:none;cursor:pointer;
+  transition:transform .12s,box-shadow .2s;
+}
+.nav-cta::after{
+  content:"";position:absolute;top:0;left:-100%;
+  width:55%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+}
+.nav-cta:hover::after{animation:shimmer .55s ease forwards}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(201,168,76,.42)}
+@keyframes shimmer{0%{left:-100%}100%{left:150%}}
 @media(max-width:720px){.nav-links a{display:none}}
 
-/* ---------- HERO ---------- */
-.hero{padding:90px 0 70px;position:relative}
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{padding:84px 0 0;position:relative}
 .hero::before{
-  content:"";position:absolute;top:-40px;left:-40px;width:540px;height:540px;max-width:90vw;border-radius:50%;
-  background:radial-gradient(circle, rgba(255,138,30,.18), transparent 64%);
-  filter:blur(20px);pointer-events:none;z-index:0;
-  animation:heroglow 7s ease-in-out infinite alternate;
+  content:"";position:absolute;top:-60px;left:-60px;
+  width:580px;height:580px;max-width:90vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,168,76,.14),transparent 64%);
+  filter:blur(26px);pointer-events:none;z-index:0;
+  animation:heroglow 8s ease-in-out infinite alternate;
 }
-@keyframes heroglow{0%{opacity:.55;transform:scale(1)}100%{opacity:1;transform:scale(1.18)}}
+@keyframes heroglow{0%{opacity:.5;transform:scale(1)}100%{opacity:1;transform:scale(1.2)}}
 .hero .wrap{position:relative;z-index:1}
+
+/* giant ghost BG word */
+.hero-bg-word{
+  position:absolute;top:-20px;right:-10px;z-index:0;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(140px,19vw,260px);letter-spacing:6px;line-height:1;
+  text-transform:uppercase;color:transparent;
+  -webkit-text-stroke:1px rgba(201,168,76,.09);
+  pointer-events:none;user-select:none;
+}
+
 .kicker{
-  font-family:'Space Mono';color:var(--cyan);font-size:13px;letter-spacing:3px;text-transform:uppercase;
+  font-family:'Space Mono';color:var(--cyan);font-size:11px;letter-spacing:4px;text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
   opacity:0;animation:rise .7s .05s forwards;
 }
+.kicker::before{content:"";display:inline-block;width:24px;height:1px;background:var(--cyan)}
+
+.hero-flags{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
 .hero-badge{
-  display:none;align-items:center;gap:10px;margin-top:16px;
-  background:rgba(255,138,30,.10);border:1px solid rgba(255,138,30,.4);
-  color:var(--amber-soft);font-family:'Space Mono';font-size:12.5px;font-weight:700;letter-spacing:.5px;
-  padding:8px 15px;border-radius:50px;width:fit-content;max-width:100%;
+  display:none;align-items:center;gap:10px;margin-top:14px;
+  background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.30);
+  color:var(--amber-soft);font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1px;
+  padding:7px 14px;border-radius:50px;width:fit-content;max-width:100%;
   opacity:0;animation:rise .8s .2s forwards;
 }
 .hero-badge .pdot{
-  width:9px;height:9px;border-radius:50%;background:var(--amber);flex:none;
-  box-shadow:0 0 0 0 rgba(255,138,30,.6);animation:pulse 2s infinite;
+  width:8px;height:8px;border-radius:50%;background:var(--amber);flex:none;
+  box-shadow:0 0 0 0 rgba(201,168,76,.6);animation:pulse 2s infinite;
 }
 @keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(255,138,30,.5)}
-  70%{box-shadow:0 0 0 9px rgba(255,138,30,0)}
-  100%{box-shadow:0 0 0 0 rgba(255,138,30,0)}
+  0%  {box-shadow:0 0 0 0   rgba(201,168,76,.5)}
+  70% {box-shadow:0 0 0 9px rgba(201,168,76,0)}
+  100%{box-shadow:0 0 0 0   rgba(201,168,76,0)}
 }
-.hero-flags{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
 .countdown{
-  display:none;align-items:center;gap:8px;margin-top:16px;
-  background:rgba(38,224,200,.08);border:1px solid rgba(38,224,200,.4);
-  color:var(--cyan);font-family:'Space Mono';font-size:12.5px;font-weight:700;letter-spacing:.5px;
-  padding:8px 15px;border-radius:50px;width:fit-content;max-width:100%;
+  display:none;align-items:center;gap:8px;margin-top:14px;
+  background:rgba(30,200,176,.08);border:1px solid rgba(30,200,176,.32);
+  color:var(--cyan);font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:.5px;
+  padding:7px 14px;border-radius:50px;width:fit-content;max-width:100%;
   opacity:0;animation:rise .8s .26s forwards;
 }
 .countdown b{color:var(--ink)}
+
 .social-proof{
-  display:none;align-items:center;gap:8px;margin-top:22px;
-  color:var(--ink);font-size:14px;font-weight:600;
+  display:none;align-items:center;gap:8px;margin-top:20px;
+  color:var(--ink);font-size:14px;font-weight:500;
   opacity:0;animation:rise .8s .52s forwards;
 }
-.social-proof .star{color:var(--amber);font-size:15px}
-.social-proof span{color:var(--muted);font-weight:500}
+.social-proof .star{color:var(--amber);font-size:14px}
+.social-proof span{color:var(--muted);font-weight:400}
+
+/* editorial headline */
 .hero h1{
-  font-family:'Anton';font-weight:400;line-height:.92;letter-spacing:.5px;
-  font-size:clamp(56px,12vw,140px);margin:14px 0 18px;text-transform:uppercase;
+  font-family:'Bebas Neue',sans-serif;font-weight:400;line-height:.88;
+  letter-spacing:2px;font-size:clamp(60px,13vw,148px);
+  margin:16px 0 14px;text-transform:uppercase;
 }
-.hero h1 .stroke{color:transparent;-webkit-text-stroke:2px var(--amber)}
+.hero h1 .stroke{
+  color:transparent;
+  background:var(--gold-text);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-stroke:0;
+}
 .hero h1 span{display:block;opacity:0;animation:rise .8s forwards}
 .hero h1 span:nth-child(1){animation-delay:.12s}
 .hero h1 span:nth-child(2){animation-delay:.22s}
+
 .hero p.lede{
-  max-width:560px;color:var(--muted);font-size:19px;line-height:1.55;
+  max-width:540px;color:var(--muted);font-size:17px;line-height:1.65;font-weight:300;
   opacity:0;animation:rise .8s .34s forwards;
 }
-.hero-actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;opacity:0;animation:rise .8s .46s forwards}
-.btn{
-  padding:15px 28px;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;border:none;
-  text-decoration:none;display:inline-flex;align-items:center;gap:10px;transition:transform .15s, box-shadow .2s, background .2s;
+.hero-actions{
+  display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;
+  opacity:0;animation:rise .8s .46s forwards;
 }
-.btn-primary{background:var(--amber);color:#180c00}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,138,30,.4)}
-.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
-.stats{display:flex;gap:40px;margin-top:56px;flex-wrap:wrap;opacity:0;animation:rise .9s .6s forwards}
-.stat .num{font-family:'Anton';font-size:42px;color:var(--ink);line-height:1}
-.stat .num em{color:var(--amber);font-style:normal}
-.stat .lbl{font-family:'Space Mono';font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:6px}
 
-/* ---------- SECTION HEADERS ---------- */
+.btn{
+  padding:13px 26px;border-radius:8px;font-weight:600;font-size:14px;
+  cursor:pointer;border:none;text-decoration:none;
+  display:inline-flex;align-items:center;gap:10px;font-family:'DM Sans';
+  transition:transform .12s ease-out,box-shadow .2s,background .2s;
+}
+.btn-primary{background:var(--gold-grad);color:#180c00;box-shadow:0 4px 20px rgba(201,168,76,.22)}
+.btn-primary:hover{transform:scale(1.03) translateY(-1px);box-shadow:0 12px 34px rgba(201,168,76,.42)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.12)}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+
+.stats{
+  display:flex;gap:40px;margin-top:50px;flex-wrap:wrap;
+  border-top:1px solid var(--line);padding-top:34px;
+  opacity:0;animation:rise .9s .6s forwards;
+}
+.stat .num{
+  font-family:'Bebas Neue';font-size:46px;color:var(--ink);line-height:1;
+}
+.stat .num em{
+  font-style:normal;
+  background:var(--gold-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.stat .lbl{font-family:'Space Mono';font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-top:5px}
+
+/* ── MARQUEE TICKER ── */
+.marquee-wrap{
+  position:relative;z-index:1;overflow:hidden;
+  border-top:1px solid var(--line-gold);border-bottom:1px solid var(--line-gold);
+  background:rgba(201,168,76,.04);
+  margin-top:58px;padding:9px 0;
+}
+.marquee-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
+.marquee-track span{
+  font-family:'Space Mono';font-size:10px;letter-spacing:3.5px;text-transform:uppercase;
+  color:var(--amber);padding:0 28px;white-space:nowrap;opacity:.70;
+}
+.marquee-track span.sep{color:rgba(201,168,76,.3);padding:0;letter-spacing:0}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ============================================================
+   SECTION HEADERS
+   ============================================================ */
 .sec{padding:80px 0;position:relative}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:40px;flex-wrap:wrap}
-.sec-head h2{font-family:'Anton';font-size:clamp(34px,6vw,60px);text-transform:uppercase;line-height:.95;letter-spacing:.5px}
-.sec-head h2 .accent{color:var(--amber)}
-.sec-head p{color:var(--muted);max-width:380px;font-size:15px}
+.sec-head h2{
+  font-family:'Bebas Neue';font-size:clamp(36px,6vw,64px);
+  text-transform:uppercase;line-height:.92;letter-spacing:2px;
+}
+.sec-head h2 .accent{
+  background:var(--gold-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sec-head p{color:var(--muted);max-width:380px;font-size:14px;font-weight:300;line-height:1.6}
 
-/* ---------- FILTERS + SHOWCASE ---------- */
+/* ============================================================
+   FILTERS + GAME TOGGLE + CARDS
+   ============================================================ */
 .filters{display:flex;gap:10px;margin-bottom:30px;flex-wrap:wrap}
 .chip{
-  background:var(--panel);border:1px solid var(--line);color:var(--muted);
-  padding:9px 18px;border-radius:50px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;
+  background:transparent;border:1px solid rgba(255,255,255,.08);color:var(--muted);
+  padding:8px 20px;border-radius:50px;
+  font-family:'DM Sans';font-weight:500;font-size:13px;letter-spacing:.3px;
+  cursor:pointer;transition:all .2s;
 }
-.chip:hover{color:var(--ink);border-color:var(--muted)}
-.chip.active{background:var(--amber);border-color:var(--amber);color:#180c00}
-/* game-version toggle (segmented control) */
-.game-toggle{display:inline-flex;gap:4px;margin-bottom:18px;background:var(--panel);border:1px solid var(--line);border-radius:50px;padding:4px}
+.chip:hover{color:var(--ink);border-color:rgba(255,255,255,.2)}
+.chip.active{background:var(--gold-grad);border-color:var(--amber);color:#180c00;font-weight:700}
+
+/* game-version toggle */
+.game-toggle{
+  display:inline-flex;gap:4px;margin-bottom:18px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:50px;padding:4px;
+}
 .game-toggle button{
   background:transparent;border:none;color:var(--muted);
-  font-family:'Space Mono';font-weight:700;font-size:13px;letter-spacing:.5px;
-  padding:8px 18px;border-radius:50px;cursor:pointer;transition:background .2s, color .2s;
+  font-family:'Space Mono';font-weight:700;font-size:12px;letter-spacing:.5px;
+  padding:8px 18px;border-radius:50px;cursor:pointer;transition:background .2s,color .2s;
 }
 .game-toggle button:hover{color:var(--ink)}
-.game-toggle button.active{background:var(--ink);color:#0a0a0c}
-/* per-card game badge (top-right) */
-.gbadge{
-  position:absolute;top:12px;right:12px;font-family:'Space Mono';font-size:11px;letter-spacing:.5px;font-weight:700;
-  padding:5px 10px;border-radius:5px;color:var(--ink);
-  background:rgba(10,10,12,.7);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(4px);
+.game-toggle button.active{
+  background:var(--gold-grad);color:#0a0a0c;
 }
-/* "Popular" pill — flag your best sellers with popular:true */
+
+/* game badge top-right of card */
+.gbadge{
+  position:absolute;top:10px;right:10px;
+  font-family:'Space Mono';font-size:10px;letter-spacing:.5px;font-weight:700;
+  padding:4px 10px;border-radius:5px;color:var(--ink);
+  background:rgba(8,8,9,.75);border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(4px);z-index:3;
+}
+
+/* popular pill */
 .tag-popular{
-  display:inline-flex;align-items:center;gap:5px;width:fit-content;margin-bottom:10px;
-  font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
-  color:var(--amber);background:rgba(255,138,30,.12);border:1px solid rgba(255,138,30,.45);
+  display:inline-flex;align-items:center;gap:5px;width:fit-content;margin-bottom:8px;
+  font-family:'Space Mono';font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--amber);background:rgba(201,168,76,.10);border:1px solid rgba(201,168,76,.35);
   padding:4px 10px;border-radius:50px;
 }
-.tag-popular .pstar{font-size:12px;line-height:1}
-/* empty state when a filter has no mods */
+.tag-popular .pstar{font-size:11px;line-height:1}
+
+/* empty state */
 .grid-empty{
-  grid-column:1/-1;text-align:center;color:var(--muted);font-size:15px;
-  border:1px dashed var(--line);border-radius:14px;padding:48px 24px;
+  grid-column:1/-1;text-align:center;color:var(--muted);font-size:14px;font-weight:300;
+  border:1px dashed rgba(255,255,255,.07);border-radius:16px;padding:52px 24px;
 }
-.grid-empty strong{display:block;color:var(--ink);font-family:'Anton';font-size:24px;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px}
+.grid-empty strong{
+  display:block;color:var(--ink);
+  font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;
+  margin-bottom:8px;text-transform:uppercase;
+}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px}
+
+/* PREMIUM CARD */
 .card{
-  background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
-  transition:transform .25s, border-color .25s, box-shadow .25s;display:flex;flex-direction:column;
   position:relative;
+  background:var(--panel);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line);
+  border-radius:16px;overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:transform .25s,border-color .25s,box-shadow .25s;
 }
+/* top accent line per category */
+.card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--card-accent,var(--amber));z-index:2;
+}
+/* hover shimmer */
 .card::after{
-  content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;opacity:0;transition:opacity .35s;
-  background:radial-gradient(420px circle at 50% -10%, rgba(255,138,30,.14), transparent 70%);
+  content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;opacity:0;transition:opacity .35s;
+  background:radial-gradient(420px circle at 50% -10%,rgba(201,168,76,.12),transparent 70%);
 }
 .card:hover::after{opacity:1}
-.card:hover{transform:translateY(-6px);border-color:var(--amber);box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.card:hover{
+  transform:translateY(-7px);
+  border-color:rgba(201,168,76,.32);
+  box-shadow:0 20px 56px rgba(0,0,0,.6),0 0 0 1px rgba(201,168,76,.12),0 0 40px rgba(201,168,76,.10);
+}
+
 .thumb{aspect-ratio:16/10;position:relative;overflow:hidden;background:var(--bg-2)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb .ph{
   width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;
-  font-family:'Anton';font-size:30px;letter-spacing:1px;color:rgba(255,255,255,.16);
+  font-family:'Bebas Neue';font-size:26px;letter-spacing:2px;color:rgba(255,255,255,.11);
   background:
-    repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 12px, transparent 12px 24px),
-    linear-gradient(135deg, #1a1a20, #0e0e12);
+    repeating-linear-gradient(45deg,rgba(255,255,255,.015) 0 12px,transparent 12px 24px),
+    linear-gradient(135deg,#141418,#0b0b0e);
   padding:20px;text-transform:uppercase;
 }
-.badge{
-  position:absolute;top:12px;left:12px;font-family:'Space Mono';font-size:11px;letter-spacing:1px;
-  text-transform:uppercase;padding:5px 10px;border-radius:5px;font-weight:700;
-  background:rgba(255,255,255,.06);border:1px solid;
-}
-.card-body{padding:18px;display:flex;flex-direction:column;gap:10px;flex:1}
-.card-body h3{font-size:20px;font-weight:900;letter-spacing:.2px}
-.card-body .desc{color:var(--muted);font-size:14px;flex:1}
-.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
-.price{font-family:'Space Mono';font-weight:700;font-size:18px;color:var(--ink)}
-.price.free{color:var(--cyan)}
-.buy{
-  background:transparent;border:1px solid var(--amber);color:var(--amber);
-  padding:9px 16px;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;
-}
-.buy:hover{background:var(--amber);color:#180c00}
 
-/* ---------- UPDATES FEED ---------- */
+.badge{
+  position:absolute;bottom:10px;left:10px;
+  font-family:'Space Mono';font-size:10px;letter-spacing:1px;
+  text-transform:uppercase;padding:4px 10px;border-radius:4px;font-weight:700;
+  background:rgba(0,0,0,.55);border:1px solid;
+  backdrop-filter:blur(4px);z-index:3;
+}
+
+.card-body{padding:18px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card-body h3{font-family:'Syne';font-size:16px;font-weight:700;letter-spacing:.1px;line-height:1.25}
+.card-body .desc{color:var(--muted);font-size:13.5px;flex:1;font-weight:300;line-height:1.55}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+
+/* price pill */
+.price{
+  font-family:'Space Mono';font-weight:700;font-size:12.5px;
+  background:var(--gold-grad);color:#180c00;
+  padding:5px 12px;border-radius:50px;
+}
+.price.free{background:rgba(30,200,176,.12);color:var(--cyan);border:1px solid rgba(30,200,176,.28)}
+
+.buy{
+  background:transparent;border:1px solid rgba(201,168,76,.32);color:var(--amber);
+  padding:8px 16px;border-radius:7px;
+  font-family:'DM Sans';font-weight:600;font-size:12.5px;letter-spacing:.2px;
+  cursor:pointer;transition:all .12s ease-out;
+}
+.buy:hover{background:var(--amber);color:#180c00;transform:scale(1.03);box-shadow:0 4px 16px rgba(201,168,76,.3)}
+
+/* ============================================================
+   UPDATES FEED
+   ============================================================ */
 .feed{position:relative;padding-left:28px}
-.feed::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--amber),transparent)}
+.feed::before{
+  content:"";position:absolute;left:6px;top:6px;bottom:6px;
+  width:1px;background:linear-gradient(var(--amber),transparent);
+}
 .entry{position:relative;padding:0 0 34px 18px}
 .entry::before{
-  content:"";position:absolute;left:-27px;top:5px;width:13px;height:13px;border-radius:50%;
-  background:var(--bg);border:3px solid var(--amber);box-shadow:0 0 0 4px rgba(255,138,30,.12);
+  content:"";position:absolute;left:-27px;top:5px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--amber);
+  box-shadow:0 0 0 4px rgba(201,168,76,.10);
 }
 .entry .meta{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
-.entry .ver{font-family:'Space Mono';font-weight:700;color:var(--cyan);font-size:13px}
-.entry .date{font-family:'Space Mono';font-size:12px;color:var(--muted)}
-.entry .tag{font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-weight:700}
-.entry h4{font-size:18px;font-weight:800;margin-bottom:4px}
-.entry p{color:var(--muted);font-size:14.5px;max-width:680px}
+.entry .ver{font-family:'Space Mono';font-weight:700;color:var(--cyan);font-size:12px}
+.entry .date{font-family:'Space Mono';font-size:11px;color:var(--muted)}
+.entry .tag{
+  font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  padding:3px 9px;border-radius:4px;
+  background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.22);
+  color:var(--amber);font-weight:700;font-family:'Space Mono';
+}
+.entry h4{font-family:'Syne';font-size:17px;font-weight:700;margin-bottom:4px}
+.entry p{color:var(--muted);font-size:14.5px;max-width:680px;font-weight:300}
 
-/* ---------- PURCHASE FLOW ---------- */
-#purchase{background:linear-gradient(180deg, transparent, rgba(255,138,30,.04))}
+/* ============================================================
+   PURCHASE FLOW
+   ============================================================ */
+#purchase{background:linear-gradient(180deg,transparent,rgba(201,168,76,.03))}
 .flow-box{
-  background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:42px;
+  background:rgba(15,15,19,.9);
+  border:1px solid var(--line-gold);border-radius:20px;padding:42px;
   display:grid;grid-template-columns:1.1fr 1fr;gap:42px;align-items:center;
+  box-shadow:inset 0 0 0 1px rgba(201,168,76,.05);
 }
 @media(max-width:780px){.flow-box{grid-template-columns:1fr;padding:28px}}
 .steps{display:flex;flex-direction:column;gap:22px}
 .step{display:flex;gap:16px;align-items:flex-start}
 .step .n{
-  flex:none;width:38px;height:38px;border-radius:9px;background:var(--amber);color:#180c00;
-  font-family:'Anton';font-size:20px;display:flex;align-items:center;justify-content:center;
+  flex:none;width:38px;height:38px;border-radius:10px;
+  background:var(--gold-grad);color:#180c00;
+  font-family:'Bebas Neue';font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(201,168,76,.28);
 }
-.step h5{font-size:16px;font-weight:800;margin-bottom:2px}
-.step p{color:var(--muted);font-size:14px}
+.step h5{font-family:'Syne';font-size:15px;font-weight:700;margin-bottom:2px}
+.step p{color:var(--muted);font-size:14px;font-weight:300}
 .discord-card{
   background:linear-gradient(135deg,#1c1c24,#101015);border:1px solid var(--line);border-radius:14px;padding:30px;text-align:center;
 }
-.discord-card .dl{font-family:'Space Mono';font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
-.handle{font-family:'Anton';font-size:30px;margin:10px 0 22px;color:var(--ink);word-break:break-all}
+.discord-card .dl{font-family:'Space Mono';font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.handle{font-family:'Bebas Neue';font-size:30px;margin:10px 0 22px;color:var(--ink);word-break:break-all;letter-spacing:1px}
 .handle .at{color:var(--amber)}
 .dc-actions{display:flex;flex-direction:column;gap:10px}
 .btn-discord{background:#5865F2;color:#fff;justify-content:center}
-.btn-discord:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(88,101,242,.45)}
+.btn-discord:hover{transform:scale(1.02) translateY(-1px);box-shadow:0 10px 28px rgba(88,101,242,.44)}
 .btn-kofi{background:#13C3FF;color:#04212b;justify-content:center}
-.btn-kofi:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(19,195,255,.45)}
+.btn-kofi:hover{transform:scale(1.02) translateY(-1px);box-shadow:0 10px 28px rgba(19,195,255,.38)}
 .kofi-card{
-  background:linear-gradient(135deg,#13202b,#0c1118);border:1px solid var(--line);border-radius:14px;padding:30px;text-align:center;
+  background:linear-gradient(135deg,#111318,#0c0f13);
+  border:1px solid var(--line-gold);border-radius:16px;padding:30px;text-align:center;
 }
-.kofi-card .dl{font-family:'Space Mono';font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
-.kofi-card .big{font-family:'Anton';font-size:26px;margin:10px 0 6px;color:var(--ink)}
-.kofi-card .sub{color:var(--muted);font-size:13px;margin-bottom:22px}
+.kofi-card .dl{font-family:'Space Mono';font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.kofi-card .big{
+  font-family:'Bebas Neue';font-size:28px;margin:10px 0 6px;letter-spacing:2px;
+  background:var(--gold-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.kofi-card .sub{color:var(--muted);font-size:13px;margin-bottom:22px;font-weight:300}
 .btn-copy{background:transparent;border:1px solid var(--line);color:var(--ink);justify-content:center}
 .btn-copy:hover{border-color:var(--cyan);color:var(--cyan)}
 
-/* ---------- FOOTER ---------- */
-footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
-.foot-in{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+/* ============================================================
+   FOOTER — giant RYN2K watermark
+   ============================================================ */
+footer{
+  border-top:1px solid var(--line);padding:44px 0;margin-top:40px;
+  position:relative;overflow:hidden;
+}
+footer::before{
+  content:"RYN2K";
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Bebas Neue',sans-serif;font-size:18vw;letter-spacing:6px;
+  color:var(--ink);opacity:.030;
+  pointer-events:none;user-select:none;white-space:nowrap;z-index:0;
+}
+.foot-in{
+  position:relative;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+}
 .foot-in .brand{font-size:20px}
-.foot-in p{color:var(--muted);font-size:13px;font-family:'Space Mono'}
+.foot-in p{color:var(--muted);font-size:12px;font-family:'Space Mono'}
 
-/* ---------- MODAL ---------- */
+/* ============================================================
+   MODAL — scale entry animation
+   ============================================================ */
 .modal-bg{
-  position:fixed;inset:0;z-index:100;background:rgba(5,5,7,.78);backdrop-filter:blur(6px);
+  position:fixed;inset:0;z-index:100;background:rgba(4,4,6,.84);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   display:none;align-items:center;justify-content:center;padding:24px;
 }
-.modal-bg.open{display:flex;animation:fade .25s}
+.modal-bg.open{display:flex;animation:fade .2s}
 .modal{
-  background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px;max-width:440px;width:100%;
-  animation:rise .35s;position:relative;
+  background:#0f0f13;
+  border:1px solid var(--line-gold);border-radius:18px;padding:32px;max-width:440px;width:100%;
+  position:relative;
+  animation:modalIn .3s cubic-bezier(.2,.8,.2,1);
+  box-shadow:0 32px 80px rgba(0,0,0,.72);
 }
-.modal .x{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1}
+@keyframes modalIn{
+  from{opacity:0;transform:scale(.96) translateY(10px)}
+  to  {opacity:1;transform:scale(1)   translateY(0)}
+}
+.modal .x{
+  position:absolute;top:16px;right:18px;
+  background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1;
+}
 .modal .x:hover{color:var(--ink)}
-.modal .ek{font-family:'Space Mono';font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan)}
-.modal h3{font-family:'Anton';font-size:28px;margin:8px 0 6px;text-transform:uppercase}
-.modal .modline{color:var(--muted);font-size:14px;margin-bottom:20px}
-.msg-box{background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:14px;font-size:14px;color:var(--ink);margin-bottom:18px}
-.msg-box .lbl{font-family:'Space Mono';font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
+.modal .ek{font-family:'Space Mono';font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--cyan)}
+.modal h3{font-family:'Bebas Neue';font-size:30px;margin:8px 0 6px;text-transform:uppercase;letter-spacing:2px}
+.modal .modline{color:var(--muted);font-size:13.5px;margin-bottom:20px;font-weight:300}
+.msg-box{
+  background:var(--bg-2);border:1px solid var(--line);
+  border-radius:10px;padding:14px;font-size:13.5px;color:var(--ink);margin-bottom:18px;
+}
+.msg-box .lbl{
+  font-family:'Space Mono';font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);display:block;margin-bottom:6px;
+}
 .modal .dc-actions{gap:10px}
+
 .toast{
   position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);z-index:200;
-  background:var(--cyan);color:#04201c;font-weight:700;padding:13px 24px;border-radius:8px;font-size:14px;
+  background:var(--gold-grad);color:#180c00;
+  font-family:'DM Sans';font-weight:700;padding:12px 24px;border-radius:50px;font-size:13px;
   opacity:0;transition:all .3s;pointer-events:none;
+  box-shadow:0 8px 28px rgba(201,168,76,.42);
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 
-/* ---------- ADDON FEATURE ---------- */
+/* ============================================================
+   ADDON SECTION
+   ============================================================ */
 #addon{position:relative;overflow:hidden}
 #addon::before{
   content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(700px 380px at 85% 20%, rgba(38,224,200,.10), transparent 60%),
-    radial-gradient(600px 400px at 0% 90%, rgba(255,138,30,.10), transparent 60%);
+    radial-gradient(700px 380px at 85% 20%,rgba(30,200,176,.08),transparent 60%),
+    radial-gradient(600px 400px at 0% 90%, rgba(201,168,76,.09),transparent 60%);
 }
 .addon-box{
   position:relative;z-index:1;
-  background:linear-gradient(135deg,#15151b,#0d0d11);
-  border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  background:#0f0f13;
+  border:1px solid var(--line-gold);border-radius:22px;overflow:hidden;
   display:grid;grid-template-columns:1.05fr .95fr;gap:0;
+  box-shadow:inset 0 0 0 1px rgba(201,168,76,.05),0 32px 80px rgba(0,0,0,.5);
 }
 @media(max-width:860px){.addon-box{grid-template-columns:1fr}}
-.addon-text{padding:46px}
-@media(max-width:860px){.addon-text{padding:32px}}
-.addon-tag{
-  display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono';font-size:11px;letter-spacing:2px;
-  text-transform:uppercase;color:var(--cyan);border:1px solid rgba(38,224,200,.35);
-  background:rgba(38,224,200,.08);padding:6px 12px;border-radius:50px;margin-bottom:18px;
+
+.addon-text{
+  /* diagonal stripe texture */
+  background:
+    repeating-linear-gradient(5deg,transparent 0 14px,rgba(255,255,255,.013) 14px 15px),
+    linear-gradient(135deg,#131318,#0e0e12);
+  padding:46px;
 }
-.addon-text h2{font-family:'Anton';font-size:clamp(32px,5vw,52px);line-height:.95;text-transform:uppercase;margin-bottom:14px}
-.addon-text h2 .accent, .addon-text h2.accent{color:var(--cyan)}
-.addon-text .pitch{color:var(--muted);font-size:16px;max-width:520px;margin-bottom:24px}
+@media(max-width:860px){.addon-text{padding:32px}}
+
+/* eyebrow */
+.addon-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Space Mono';font-size:10px;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--cyan);
+  border:1px solid rgba(30,200,176,.30);background:rgba(30,200,176,.07);
+  padding:6px 14px;border-radius:50px;margin-bottom:18px;
+}
+.addon-tag::before{content:"✦";font-size:8px}
+
+.addon-text h2{
+  font-family:'Bebas Neue';font-size:clamp(32px,5vw,54px);
+  line-height:.92;text-transform:uppercase;margin-bottom:14px;letter-spacing:2px;
+}
+.addon-text h2 .accent,.addon-text h2.accent{color:var(--cyan)}
+.addon-text .pitch{color:var(--muted);font-size:15px;max-width:500px;margin-bottom:24px;font-weight:300;line-height:1.65}
 .addon-feats{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:30px}
-.addon-feats li{display:flex;gap:12px;align-items:flex-start;font-size:15px;color:var(--ink)}
-.addon-feats li::before{content:"▸";color:var(--cyan);font-weight:700;margin-top:1px}
+.addon-feats li{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;color:var(--ink);font-weight:300}
+.addon-feats li::before{content:"▸";color:var(--cyan);font-weight:700;margin-top:1px;flex:none}
 .addon-buy{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
-.addon-price{font-family:'Anton';font-size:34px;color:var(--ink);line-height:1}
-.addon-price.free{color:var(--cyan)}
+
+/* metallic gradient price */
+.addon-price{
+  font-family:'Bebas Neue';font-size:44px;letter-spacing:2px;line-height:1;
+  background:var(--gold-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.addon-price.free{background:none;color:var(--cyan)}
+
+.addon-reqs{
+  margin-top:18px;font-size:12px;color:var(--muted);font-family:'Space Mono';
+  border-top:1px dashed rgba(255,255,255,.07);padding-top:16px;line-height:1.7;
+}
+.addon-reqs b{color:var(--cyan);font-weight:700}
+
+.addon-supports{margin-bottom:28px}
+.addon-supports .sup-lbl{
+  font-family:'Space Mono';font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--cyan);font-weight:700;margin-bottom:12px;display:block;
+}
+.support-chips{display:flex;flex-wrap:wrap;gap:8px}
+.support-chips span{
+  font-size:12px;font-weight:500;color:var(--ink);
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  padding:6px 13px;border-radius:50px;
+  transition:border-color .2s,color .2s,background .2s;
+}
+.support-chips span:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(30,200,176,.08)}
+
 .addon-art{
   position:relative;min-height:320px;border-left:1px solid var(--line);
   display:flex;flex-direction:column;
-  background:
-    repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 14px, transparent 14px 28px),
-    linear-gradient(135deg,#101015,#1a1a22);
+  background:linear-gradient(135deg,#0f0f14,#1a1a22);
 }
 @media(max-width:860px){.addon-art{border-left:none;border-top:1px solid var(--line);min-height:240px}}
 .addon-shot-wrap{position:relative;flex:1;display:flex;align-items:center;justify-content:center;padding:24px;min-height:0}
 .addon-art img{
   max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
-  border:1px solid #2f2f38;border-radius:10px;
-  box-shadow:0 16px 44px rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,.08);border-radius:10px;
+  box-shadow:0 16px 44px rgba(0,0,0,.6);
 }
-.addon-tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 16px 22px}
+.addon-tabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:0 16px 22px}
 .addon-tabs button{
-  background:var(--panel);border:1px solid var(--line);color:var(--muted);
-  font-family:'Space Mono';font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  padding:8px 18px;border-radius:50px;cursor:pointer;transition:all .2s;
+  background:transparent;border:1px solid var(--line);color:var(--muted);
+  font-family:'Space Mono';font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:7px 16px;border-radius:50px;cursor:pointer;transition:all .2s;
 }
-.addon-tabs button:hover{color:var(--ink);border-color:var(--muted)}
+.addon-tabs button:hover{color:var(--ink);border-color:rgba(255,255,255,.2)}
 .addon-tabs button.active{background:var(--cyan);border-color:var(--cyan);color:#04201c}
-.addon-art .ph{font-family:'Anton';font-size:22px;color:rgba(255,255,255,.18);text-align:center;padding:24px;text-transform:uppercase;letter-spacing:1px}
-.addon-reqs{
-  margin-top:18px;font-size:13px;color:var(--muted);font-family:'Space Mono';
-  border-top:1px dashed var(--line);padding-top:16px;line-height:1.7;
+.addon-art .ph{
+  font-family:'Bebas Neue';font-size:22px;color:rgba(255,255,255,.14);
+  text-align:center;padding:24px;text-transform:uppercase;letter-spacing:2px;
 }
-.addon-reqs b{color:var(--cyan);font-weight:700}
-.addon-supports{margin-bottom:28px}
-.addon-supports .sup-lbl{font-family:'Space Mono';font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);font-weight:700;margin-bottom:12px;display:block}
-.support-chips{display:flex;flex-wrap:wrap;gap:8px}
-.support-chips span{
-  font-size:13px;font-weight:600;color:var(--ink);
-  background:rgba(255,255,255,.04);border:1px solid var(--line);
-  padding:7px 13px;border-radius:50px;transition:border-color .2s, color .2s, background .2s;
-}
-.support-chips span:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(38,224,200,.08)}
 
-/* ---------- FAQ ---------- */
-.faq-list{display:flex;flex-direction:column;gap:12px;max-width:820px}
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq-list{display:flex;flex-direction:column;gap:10px;max-width:820px}
 .faq-item{
-  background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .2s;
+  background:var(--panel);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:13px;overflow:hidden;transition:border-color .2s;
 }
-.faq-item[open]{border-color:var(--amber)}
+.faq-item[open]{border-color:rgba(201,168,76,.32)}
 .faq-item summary{
-  list-style:none;cursor:pointer;padding:20px 22px;font-weight:700;font-size:16px;
+  list-style:none;cursor:pointer;padding:20px 22px;
+  font-family:'Syne';font-weight:700;font-size:15.5px;
   display:flex;align-items:center;justify-content:space-between;gap:16px;
 }
 .faq-item summary::-webkit-details-marker{display:none}
 .faq-item summary::after{
-  content:"+";font-family:'Anton';font-size:24px;color:var(--amber);transition:transform .2s;line-height:1;
+  content:"+";font-family:'Bebas Neue';font-size:26px;color:var(--amber);transition:transform .2s;line-height:1;
 }
 .faq-item[open] summary::after{transform:rotate(45deg)}
-.faq-item .ans{padding:0 22px 20px;color:var(--muted);font-size:14.5px;line-height:1.6}
+.faq-item .ans{padding:0 22px 20px;color:var(--muted);font-size:14.5px;line-height:1.65;font-weight:300}
 </style>
 </head>
 <body>
+
+<div id="prog"></div>
 <div class="bg-fx" aria-hidden="true"></div>
 
 <nav>
@@ -466,6 +725,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
 
 <header class="hero">
   <div class="wrap">
+    <div class="hero-bg-word" aria-hidden="true">MODS</div>
     <div class="kicker">// Custom NBA 2K Modding</div>
     <div class="hero-flags">
       <div class="hero-badge" id="heroBadge"><span class="pdot"></span><span id="heroBadgeText"></span></div>
@@ -484,7 +744,26 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
       <div class="stat"><div class="num"><em>—</em></div><div class="lbl">Players</div></div>
     </div>
   </div>
+
+  <div class="marquee-wrap">
+    <div class="marquee-track" aria-hidden="true">
+      <span>NBA 2K MODS</span><span class="sep"> · </span>
+      <span>BLENDER ADDON</span><span class="sep"> · </span>
+      <span>COURT TEXTURES</span><span class="sep"> · </span>
+      <span>ARENA LIGHTING</span><span class="sep"> · </span>
+      <span>PLAYER FACES</span><span class="sep"> · </span>
+      <span>CUSTOM BUILDS</span><span class="sep"> · </span>
+      <span>NBA 2K MODS</span><span class="sep"> · </span>
+      <span>BLENDER ADDON</span><span class="sep"> · </span>
+      <span>COURT TEXTURES</span><span class="sep"> · </span>
+      <span>ARENA LIGHTING</span><span class="sep"> · </span>
+      <span>PLAYER FACES</span><span class="sep"> · </span>
+      <span>CUSTOM BUILDS</span><span class="sep"> · </span>
+    </div>
+  </div>
 </header>
+
+<div class="sec-divider"><span>✦</span></div>
 
 <section class="sec" id="showcase">
   <div class="wrap">
@@ -497,6 +776,8 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
     <div class="grid" id="grid"></div>
   </div>
 </section>
+
+<div class="sec-divider"><span>✦</span></div>
 
 <section class="sec" id="addon">
   <div class="wrap">
@@ -527,6 +808,8 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
   </div>
 </section>
 
+<div class="sec-divider"><span>✦</span></div>
+
 <section class="sec" id="updates">
   <div class="wrap">
     <div class="sec-head">
@@ -537,6 +820,8 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
   </div>
 </section>
 
+<div class="sec-divider"><span>✦</span></div>
+
 <section class="sec" id="faq">
   <div class="wrap">
     <div class="sec-head">
@@ -544,40 +829,35 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
       <p>The quick answers. Still stuck? Reach me on Discord.</p>
     </div>
     <div class="faq-list">
-
       <details class="faq-item">
         <summary>Will your mods and addon work with NBA 2K27?</summary>
         <div class="ans">Yes — I'm preparing everything for the NBA 2K27 release in September. Once the game is out I'll update the mods and the addon for it, and post the compatible versions here and on Ko-fi. Existing buyers get the 2K27-ready updates.</div>
       </details>
-
       <details class="faq-item">
         <summary>How do I receive my files after paying?</summary>
         <div class="ans">Checkout runs through Ko-fi (paid via PayPal). After payment you get your download right away, along with install instructions. If anything doesn't arrive, message me on Discord and I'll sort it out.</div>
       </details>
-
       <details class="faq-item">
         <summary>How do I install a mod?</summary>
         <div class="ans">Every mod comes with a short step-by-step guide. In general you'll drop the files into your NBA 2K mods folder using a mod manager. If you get stuck, send me a message on Discord and I'll walk you through it.</div>
       </details>
-
       <details class="faq-item">
         <summary>What do I need to use the Blender addon?</summary>
         <div class="ans">See the Requirements listed in the addon section above — it shows the Blender version and the NBA 2K version it supports. If you're unsure whether your setup works, just ask before buying.</div>
       </details>
-
       <details class="faq-item">
         <summary>Do you offer refunds?</summary>
         <div class="ans">Because these are digital files that can't be returned once downloaded, sales are generally final. If a file is broken or doesn't work as described, message me on Discord and I'll fix it or make it right.</div>
       </details>
-
       <details class="faq-item">
         <summary>Can you make a custom mod or request?</summary>
         <div class="ans">Sometimes, depending on my queue. Send me the details on Discord and I'll let you know if it's something I can do and what it would cost.</div>
       </details>
-
     </div>
   </div>
 </section>
+
+<div class="sec-divider"><span>✦</span></div>
 
 <section class="sec" id="purchase">
   <div class="wrap">
@@ -612,7 +892,6 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
   </div>
 </footer>
 
-<!-- PURCHASE MODAL -->
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <button class="x" onclick="closeModal()">×</button>
@@ -637,50 +916,25 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:40px}
 /* ============================================================
    1) EDIT YOUR CONTACT + PURCHASE INFO HERE
    ============================================================ */
-const DISCORD_USERNAME = "ryn2kmods";                      // shown on the site
+const DISCORD_USERNAME = "ryn2kmods";
 const DISCORD_LINK     = "https://discord.gg/k9YBkfwc";
-// ^ Replace with EITHER your profile link (discord.com/users/<your-id>)
-//   OR a server invite (https://discord.gg/xxxxxx).
-
-const KOFI_LINK = "https://ko-fi.com/ryn2kmods";           // your main Ko-fi page
-// ^ Buyers check out here (Ko-fi handles payment via PayPal + file delivery).
-//   Each mod uses this link by default. To send a mod to its OWN Ko-fi
-//   shop item instead, add a "kofi" field to that mod below.
-
-// Banner pill in the hero. Set to "" to hide it.
-// When 2K27 launches in September, change this to e.g. "NBA 2K27 Ready".
-const HERO_BADGE = "NBA 2K26 MODS · NBA 2K27 MODS";
-
-// Countdown pill in the hero. Set COUNTDOWN_DATE to NBA 2K27's official
-// release date (YYYY-MM-DD) once 2K announces it — then the pill appears.
-// Left empty on purpose for now (no official date yet) = countdown hidden.
-const COUNTDOWN_DATE  = "";
-const COUNTDOWN_LABEL = "NBA 2K27 mods drop in";   // shown before the day count
-const COUNTDOWN_DONE  = "🏀 NBA 2K27 mods are dropping now!"; // shown once the date arrives
-
-// Small trust line under the hero buttons. Set to "" to hide it.
-const SOCIAL_PROOF = "Trusted by 160+ supporters on Ko-fi";
+const KOFI_LINK        = "https://ko-fi.com/ryn2kmods";
+const HERO_BADGE       = "NBA 2K26 MODS · NBA 2K27 MODS";
+const COUNTDOWN_DATE   = "";
+const COUNTDOWN_LABEL  = "NBA 2K27 mods drop in";
+const COUNTDOWN_DONE   = "🏀 NBA 2K27 mods are dropping now!";
+const SOCIAL_PROOF     = "Trusted by 160+ supporters on Ko-fi";
 
 /* ============================================================
-   2) EDIT YOUR CATEGORIES HERE
-   - key:   short id used by each mod's "cat" field (no spaces)
-   - label: what shows on the filter button
-   - color: hex color for that category's filter + card badge
-   Add or remove lines freely — the filters, badges, and stats
-   all update automatically.
+   2) CATEGORIES
    ============================================================ */
 const CATEGORIES = [
   { key:"lighting", label:"Lighting", color:"#ffd23e" },
   { key:"court",    label:"Court",    color:"#f25f9e" },
-  // Add these back when you have mods for them:
-  // { key:"player", label:"Players", color:"#ff8a1e" },
-  // { key:"global", label:"Global",  color:"#26e0c8" },
 ];
 
 /* ============================================================
-   2b) GAME VERSIONS — the All / 2K26 / 2K27 toggle
-   Each mod has a "game" key that must match one of these.
-   Remove the 2k27 line if you don't want that tab showing yet.
+   2b) GAME VERSIONS
    ============================================================ */
 const GAMES = [
   { key:"2k26", label:"NBA 2K26", short:"2K26" },
@@ -688,15 +942,7 @@ const GAMES = [
 ];
 
 /* ============================================================
-   3) EDIT YOUR MODS HERE
-   - cat:  must match a category "key" above (e.g. "lighting")
-   - game: which game version — "2k26" or "2k27" (matches GAMES above)
-   - img: optional URL/path to a screenshot. Leave "" for a styled placeholder.
-   - price: e.g. "$8", or "Free"
-   - kofi: OPTIONAL. A direct Ko-fi link for THIS mod. Omit it and the
-           mod uses your main KOFI_LINK above.
-   - popular: OPTIONAL. Add  popular:true  to show a "★ Popular" badge on
-              that mod's card. Put it on your best sellers; remove to hide.
+   3) MODS
    ============================================================ */
 const MODS = [
   { name:"Broadcast Realism Lighting Overhaul",    cat:"lighting", game:"2k26", price:"$7", img:"images/cover.jpg", desc:"Full lighting overhaul tuned for true-to-broadcast realism on every court.",        kofi:"https://ko-fi.com/s/ed9b44cabd" },
@@ -710,15 +956,12 @@ const MODS = [
 ];
 
 /* ============================================================
-   3b) EDIT YOUR BLENDER ADDON HERE (the flagship tool section)
-   - features: each line becomes a bullet point. Add/remove freely.
-   - img: optional screenshot of the addon in Blender ("" = placeholder)
-   - kofi: optional own Ko-fi link; omit to use the main KOFI_LINK above
+   3b) BLENDER ADDON
    ============================================================ */
 const ADDON = {
   name:    "NBA 2K Blender Addon",
   version: "v2.1.1",
-  price:   "$50",                     // or "Free"
+  price:   "$50",
   pitch:   "The exact Blender addon I use to build every mod on this site — import, edit, and export NBA 2K player and arena models (.SCNE) without the usual crashes. Built for modders who want a faster, cleaner pipeline.",
   features: [
     "Import & export NBA 2K player and arena models (.SCNE)",
@@ -728,38 +971,32 @@ const ADDON = {
     "Handles cloth/net simulation meshes and smart arena instancing",
     "Regular updates and a quick-start install guide (PDF)",
   ],
-  img:  "images/blender.png",           // fallback used only if gallery below is empty
-  // Gallery tabs shown in the addon panel. Each = a highlighted label + its image.
-  // Add/remove freely. Drop the image files into your images/ folder.
+  img:  "images/blender.png",
   gallery: [
-    { label:"Arena",  img:"images/blender.png" },
-    { label:"Player", img:"images/player.png" },
-    { label:"Shoes",  img:"images/shoes.png" },
-    { label:"Jersey", img:"images/jersey.png" },
-    { label:"Shorts", img:"images/shorts.png" },
+    { label:"Arena",       img:"images/blender.png" },
+    { label:"Player",      img:"images/player.png" },
+    { label:"Shoes",       img:"images/shoes.png" },
+    { label:"Jersey",      img:"images/jersey.png" },
+    { label:"Shorts",      img:"images/shorts.png" },
     { label:"Accessories", img:"images/accessories.png" },
   ],
-  // Supported-models tag row. Left empty on purpose (the addon imports any
-  // 2K model, so the list isn't needed). Add items here only if you want it back.
   supports: [],
-  kofi: "https://ko-fi.com/ryn2kmods", // e.g. "https://ko-fi.com/s/youraddon"
-  // Requirements line shown under the buy button. Edit the values to match.
+  kofi: "https://ko-fi.com/ryn2kmods",
   requirements: "Requires Blender 3.0+ (tested on 4.2+ LTS) · Works with NBA 2K26 · NBA 2K27 support coming soon",
 };
 
 /* ============================================================
-   4) EDIT YOUR UPDATES HERE (newest first)
-   - tag: "New", "Fix", "Update", etc.
+   4) UPDATES
    ============================================================ */
 const UPDATES = [
-  { ver:"—", date:"Coming soon", tag:"Coming Soon", title:"NBA 2K27 mods in the works", body:"Prepping the full lineup — lighting, courts, and more — for the NBA 2K27 launch. Follow on Discord for the drop." },
-  { ver:"v2.1.1", date:"May 28, 2026", tag:"Update", title:"NBA 2K Blender Addon updated", body:"Latest addon build with cleaner exports and the 'Check Export Accuracy' tool. Existing buyers get the update." },
-  { ver:"—", date:"May 10, 2026", tag:"New", title:"Hybrid Court trio released", body:"Local Broadcast, City, and Classic courts — custom designs with realistic floor textures. Available now on Ko-fi." },
-  { ver:"—", date:"Apr 22, 2026", tag:"New", title:"Five 2K26 lighting mods live", body:"Broadcast Realism, Immersive, ESPN-Style, and two Cinematic Hybrid lighting overhauls dropped for NBA 2K26." },
+  { ver:"—",      date:"Coming soon",  tag:"Coming Soon", title:"NBA 2K27 mods in the works",           body:"Prepping the full lineup — lighting, courts, and more — for the NBA 2K27 launch. Follow on Discord for the drop." },
+  { ver:"v2.1.1", date:"May 28, 2026", tag:"Update",      title:"NBA 2K Blender Addon updated",         body:"Latest addon build with cleaner exports and the 'Check Export Accuracy' tool. Existing buyers get the update." },
+  { ver:"—",      date:"May 10, 2026", tag:"New",         title:"Hybrid Court trio released",           body:"Local Broadcast, City, and Classic courts — custom designs with realistic floor textures. Available now on Ko-fi." },
+  { ver:"—",      date:"Apr 22, 2026", tag:"New",         title:"Five 2K26 lighting mods live",         body:"Broadcast Realism, Immersive, ESPN-Style, and two Cinematic Hybrid lighting overhauls dropped for NBA 2K26." },
 ];
 
 /* ============================================================
-   You normally don't need to edit below this line.
+   RUNTIME — original logic 100% intact + scroll progress bar
    ============================================================ */
 const $ = s => document.querySelector(s);
 document.getElementById("yr").textContent = new Date().getFullYear();
@@ -767,140 +1004,129 @@ document.getElementById("handleText").textContent = DISCORD_USERNAME;
 document.getElementById("discordLink").href = DISCORD_LINK;
 document.getElementById("kofiLink").href = KOFI_LINK;
 
+// scroll progress
+(function(){
+  const bar = document.getElementById("prog");
+  window.addEventListener("scroll",()=>{
+    const pct = window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100;
+    bar.style.width = Math.min(100,pct)+"%";
+  },{passive:true});
+})();
+
 // hero badge
 if(HERO_BADGE && HERO_BADGE.trim()){
   $("#heroBadgeText").textContent = HERO_BADGE;
   $("#heroBadge").style.display = "inline-flex";
 }
 
-// social proof line
+// social proof
 if(SOCIAL_PROOF && SOCIAL_PROOF.trim()){
   const sp = $("#socialProof");
-  sp.innerHTML = `<span class="star">★★★★★</span> ` + SOCIAL_PROOF.replace(/</g,"&lt;");
+  sp.innerHTML = `<span class="star">★★★★★</span> `+SOCIAL_PROOF.replace(/</g,"&lt;");
   sp.style.display = "flex";
 }
 
-// 2K27 countdown
+// countdown
 if(COUNTDOWN_DATE && COUNTDOWN_DATE.trim()){
   const cd = $("#countdown");
-  const target = new Date(COUNTDOWN_DATE + "T00:00:00");
-  const dayMs = 86400000;
-  const days = Math.ceil((target - new Date()) / dayMs);
-  if(isNaN(target.getTime())){
-    // bad date — leave hidden
-  } else if(days > 0){
-    cd.innerHTML = `⏳ ${COUNTDOWN_LABEL} <b>${days} day${days===1?"":"s"}</b>`;
-    cd.style.display = "inline-flex";
-  } else {
-    cd.innerHTML = COUNTDOWN_DONE.replace(/</g,"&lt;");
-    cd.style.display = "inline-flex";
+  const target = new Date(COUNTDOWN_DATE+"T00:00:00");
+  const days = Math.ceil((target-new Date())/86400000);
+  if(!isNaN(target.getTime())){
+    if(days>0){
+      cd.innerHTML=`⏳ ${COUNTDOWN_LABEL} <b>${days} day${days===1?"":"s"}</b>`;
+      cd.style.display="inline-flex";
+    } else {
+      cd.innerHTML=COUNTDOWN_DONE.replace(/</g,"&lt;");
+      cd.style.display="inline-flex";
+    }
   }
 }
 
-// addon feature section
+// addon section
 (function(){
   const free = ADDON.price.toLowerCase()==="free";
   $("#addonTitle").textContent = ADDON.name;
-  $("#addonTag").textContent = "● The Tool · " + ADDON.version;
+  $("#addonTag").textContent = "● The Tool · "+ADDON.version;
   $("#addonPitch").textContent = ADDON.pitch;
   const ul = $("#addonFeats");
-  ADDON.features.forEach(f => { const li=document.createElement("li"); li.textContent=f; ul.appendChild(li); });
-  // supported-models chips
+  ADDON.features.forEach(f=>{ const li=document.createElement("li"); li.textContent=f; ul.appendChild(li); });
   if(ADDON.supports && ADDON.supports.length){
-    const supWrap = $("#addonSupports"), chips = $("#supportChips");
-    ADDON.supports.forEach(s => { const el=document.createElement("span"); el.textContent=s; chips.appendChild(el); });
-    supWrap.hidden = false;
+    const supWrap=$("#addonSupports"), chips=$("#supportChips");
+    ADDON.supports.forEach(s=>{ const el=document.createElement("span"); el.textContent=s; chips.appendChild(el); });
+    supWrap.hidden=false;
   }
   if(ADDON.requirements){
-    $("#addonReqs").innerHTML = "<b>Requirements</b><br>" +
+    $("#addonReqs").innerHTML="<b>Requirements</b><br>"+
       ADDON.requirements.replace(/&/g,"&amp;").replace(/</g,"&lt;");
   }
-  const price = $("#addonPrice");
-  price.textContent = free ? "Free" : ADDON.price;
+  const price=$("#addonPrice");
+  price.textContent=free?"Free":ADDON.price;
   if(free) price.classList.add("free");
-  const buy = $("#addonKofi");
-  buy.href = ADDON.kofi || KOFI_LINK;
-  buy.textContent = free ? "☕ Download free on Ko-fi" : "☕ Get the addon on Ko-fi";
-  // addon image gallery (labeled tabs)
-  const shot = $("#addonShot"), ph = $("#addonArt"), tabs = $("#addonTabs");
-  const gallery = (ADDON.gallery && ADDON.gallery.length) ? ADDON.gallery
-                : (ADDON.img ? [{ label:"Preview", img:ADDON.img }] : []);
+  const buy=$("#addonKofi");
+  buy.href=ADDON.kofi||KOFI_LINK;
+  buy.textContent=free?"☕ Download free on Ko-fi":"☕ Get the addon on Ko-fi";
+  const shot=$("#addonShot"), ph=$("#addonArt"), tabs=$("#addonTabs");
+  const gallery=(ADDON.gallery&&ADDON.gallery.length)?ADDON.gallery
+               :(ADDON.img?[{label:"Preview",img:ADDON.img}]:[]);
   if(gallery.length){
-    ph.style.display = "none";
-    shot.hidden = false;
-    const show = (i) => {
-      shot.src = gallery[i].img;
-      shot.alt = ADDON.name + " — " + gallery[i].label;
-      [...tabs.children].forEach((b, bi) => b.classList.toggle("active", bi === i));
+    ph.style.display="none"; shot.hidden=false;
+    const show=i=>{
+      shot.src=gallery[i].img; shot.alt=ADDON.name+" — "+gallery[i].label;
+      [...tabs.children].forEach((b,bi)=>b.classList.toggle("active",bi===i));
     };
-    if(gallery.length > 1){
-      gallery.forEach((g, i) => {
-        const b = document.createElement("button");
-        b.textContent = g.label;
-        b.onclick = () => show(i);
-        tabs.appendChild(b);
-      });
+    if(gallery.length>1){
+      gallery.forEach((g,i)=>{ const b=document.createElement("button"); b.textContent=g.label; b.onclick=()=>show(i); tabs.appendChild(b); });
     }
     show(0);
   }
 })();
 
-// helper: look up a category by key
-const catMap = Object.fromEntries(CATEGORIES.map(c => [c.key, c]));
-function hexToRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255, n>>8&255, n&255]; }
+const catMap = Object.fromEntries(CATEGORIES.map(c=>[c.key,c]));
+function hexToRgb(h){ const n=parseInt(h.slice(1),16); return [n>>16&255,n>>8&255,n&255]; }
 
 // stats
 const usedCats = new Set(MODS.map(m=>m.cat));
-const statEls = document.querySelectorAll("#stats .num em");
+const statEls  = document.querySelectorAll("#stats .num em");
 const statLbls = document.querySelectorAll("#stats .lbl");
 statEls[0].textContent = MODS.length;
 statEls[1].textContent = usedCats.size;
-// third stat = your biggest category (count + its label), so it's always meaningful
-const topCat = [...usedCats]
-  .map(k => ({ k, n: MODS.filter(m => m.cat === k).length }))
-  .sort((a,b) => b.n - a.n)[0];
+const topCat = [...usedCats].map(k=>({k,n:MODS.filter(m=>m.cat===k).length})).sort((a,b)=>b.n-a.n)[0];
 if(topCat){
   statEls[2].textContent = topCat.n;
-  const lbl = (CATEGORIES.find(c => c.key === topCat.k) || {}).label || "Mods";
-  if(statLbls[2]) statLbls[2].textContent = lbl;
+  const lbl=(CATEGORIES.find(c=>c.key===topCat.k)||{}).label||"Mods";
+  if(statLbls[2]) statLbls[2].textContent=lbl;
 }
 
-// gameMap for short labels
-const gameMap = Object.fromEntries(GAMES.map(g => [g.key, g]));
-
-// active filter state
+const gameMap = Object.fromEntries(GAMES.map(g=>[g.key,g]));
 let activeGame = "all";
 let activeCat  = "all";
 
-// render category chips from CATEGORIES
+// filter chips
 const filters = $("#filters");
-[{key:"all",label:"All"}, ...CATEGORIES].forEach((c,i)=>{
-  const b = document.createElement("button");
-  b.className = "chip" + (i===0 ? " active" : "");
-  b.dataset.cat = c.key;
-  b.textContent = c.label;
-  b.onclick = () => {
-    activeCat = c.key;
+[{key:"all",label:"All"},...CATEGORIES].forEach((c,i)=>{
+  const b=document.createElement("button");
+  b.className="chip"+(i===0?" active":"");
+  b.dataset.cat=c.key; b.textContent=c.label;
+  b.onclick=()=>{
+    activeCat=c.key;
     document.querySelectorAll("#filters .chip").forEach(x=>{
-      x.classList.remove("active");
-      x.style.background=""; x.style.borderColor=""; x.style.color="";
+      x.classList.remove("active"); x.style.background=""; x.style.borderColor=""; x.style.color="";
     });
     b.classList.add("active");
-    if(c.color){ b.style.background=c.color; b.style.borderColor=c.color; b.style.color="#180c00"; }
+    if(c.color){b.style.background=c.color;b.style.borderColor=c.color;b.style.color="#180c00";}
     render();
   };
   filters.appendChild(b);
 });
 
-// render game toggle (All / 2K26 / 2K27)
-const gameToggle = $("#gameToggle");
-[{key:"all",short:"All"}, ...GAMES].forEach((g,i)=>{
-  const b = document.createElement("button");
-  b.className = (i===0 ? "active" : "");
-  b.dataset.game = g.key;
-  b.textContent = g.short;
-  b.onclick = () => {
-    activeGame = g.key;
+// game toggle
+const gameToggle=$("#gameToggle");
+[{key:"all",short:"All"},...GAMES].forEach((g,i)=>{
+  const b=document.createElement("button");
+  b.className=(i===0?"active":"");
+  b.dataset.game=g.key; b.textContent=g.short;
+  b.onclick=()=>{
+    activeGame=g.key;
     [...gameToggle.children].forEach(x=>x.classList.remove("active"));
     b.classList.add("active");
     render();
@@ -908,38 +1134,31 @@ const gameToggle = $("#gameToggle");
   gameToggle.appendChild(b);
 });
 
-// render cards (filters by BOTH game and category)
-const grid = $("#grid");
+// render cards
+const grid=$("#grid");
 function render(){
-  grid.innerHTML = "";
-  const list = MODS.filter(m =>
-    (activeGame==="all" || m.game===activeGame) &&
-    (activeCat==="all"  || m.cat===activeCat)
-  );
+  grid.innerHTML="";
+  const list=MODS.filter(m=>(activeGame==="all"||m.game===activeGame)&&(activeCat==="all"||m.cat===activeCat));
   if(!list.length){
-    const g = gameMap[activeGame];
-    const msg = document.createElement("div");
-    msg.className = "grid-empty";
-    msg.innerHTML = g
-      ? `<strong>${g.label} mods coming soon</strong>Drops land here at launch — follow along on Discord for the release.`
-      : `<strong>Nothing here yet</strong>Try a different filter.`;
-    grid.appendChild(msg);
-    return;
+    const g=gameMap[activeGame];
+    const msg=document.createElement("div"); msg.className="grid-empty";
+    msg.innerHTML=g
+      ?`<strong>${g.label} mods coming soon</strong>Drops land here at launch — follow along on Discord for the release.`
+      :`<strong>Nothing here yet</strong>Try a different filter.`;
+    grid.appendChild(msg); return;
   }
   list.forEach(m=>{
-    const c = catMap[m.cat] || {label:m.cat, color:"#8a8a96"};
-    const [r,g,bl] = hexToRgb(c.color);
-    const badgeStyle = `color:${c.color};border-color:rgba(${r},${g},${bl},.4);background:rgba(${r},${g},${bl},.12)`;
-    const gb = gameMap[m.game];
-    const gameBadge = gb ? `<span class="gbadge">${gb.short}</span>` : "";
-    const thumb = m.img
-      ? `<img src="${m.img}" alt="${m.name}">`
-      : `<div class="ph">${m.name}</div>`;
-    const free = m.price.toLowerCase()==="free";
-    const popular = m.popular ? `<div class="tag-popular"><span class="pstar">★</span> Popular</div>` : "";
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
+    const c=catMap[m.cat]||{label:m.cat,color:"#8a8a96"};
+    const [r,g,bl]=hexToRgb(c.color);
+    const badgeStyle=`color:${c.color};border-color:rgba(${r},${g},${bl},.4);background:rgba(${r},${g},${bl},.12)`;
+    const gb=gameMap[m.game];
+    const gameBadge=gb?`<span class="gbadge">${gb.short}</span>`:"";
+    const thumb=m.img?`<img src="${m.img}" alt="${m.name}">`:`<div class="ph">${m.name}</div>`;
+    const free=m.price.toLowerCase()==="free";
+    const popular=m.popular?`<div class="tag-popular"><span class="pstar">★</span> Popular</div>`:"";
+    const card=document.createElement("div"); card.className="card";
+    card.style.setProperty("--card-accent",c.color);
+    card.innerHTML=`
       <div class="thumb">${thumb}<span class="badge" style="${badgeStyle}">${c.label}</span>${gameBadge}</div>
       <div class="card-body">
         ${popular}
@@ -950,18 +1169,17 @@ function render(){
           <button class="buy">Get this mod</button>
         </div>
       </div>`;
-    card.querySelector(".buy").onclick = () => openModal(m);
+    card.querySelector(".buy").onclick=()=>openModal(m);
     grid.appendChild(card);
   });
 }
 render();
 
 // updates feed
-const feed = $("#feed");
+const feed=$("#feed");
 UPDATES.forEach(u=>{
-  const e = document.createElement("div");
-  e.className = "entry";
-  e.innerHTML = `
+  const e=document.createElement("div"); e.className="entry";
+  e.innerHTML=`
     <div class="meta">
       <span class="ver">${u.ver}</span>
       <span class="date">${u.date}</span>
@@ -973,44 +1191,38 @@ UPDATES.forEach(u=>{
 });
 
 // modal
-let currentMsg = "";
+let currentMsg="";
 function openModal(m){
-  const free = m.price.toLowerCase()==='free';
-  currentMsg = `Hi! I'm interested in the "${m.name}" mod${!free ? ' ('+m.price+')' : ''}. Quick question before I buy:`;
-  $("#modTitle").textContent = m.name;
-  $("#modPrice").textContent = free ? "Free mod — grab it on Ko-fi at no charge." : "Price: " + m.price + " · pay securely on Ko-fi (PayPal)";
-  $("#modMsg").textContent = currentMsg;
-  $("#modKofi").href = m.kofi || KOFI_LINK;
-  $("#modKofi").textContent = free ? "☕ Get it free on Ko-fi" : "☕ Buy on Ko-fi";
-  $("#modDiscord").href = DISCORD_LINK;
+  const free=m.price.toLowerCase()==="free";
+  currentMsg=`Hi! I'm interested in the "${m.name}" mod${!free?" ("+m.price+")":""}.  Quick question before I buy:`;
+  $("#modTitle").textContent=m.name;
+  $("#modPrice").textContent=free?"Free mod — grab it on Ko-fi at no charge.":"Price: "+m.price+" · pay securely on Ko-fi (PayPal)";
+  $("#modMsg").textContent=currentMsg;
+  $("#modKofi").href=m.kofi||KOFI_LINK;
+  $("#modKofi").textContent=free?"☕ Get it free on Ko-fi":"☕ Buy on Ko-fi";
+  $("#modDiscord").href=DISCORD_LINK;
   $("#modalBg").classList.add("open");
 }
-function closeModal(){ $("#modalBg").classList.remove("open"); }
-document.addEventListener("keydown", e => { if(e.key==="Escape") closeModal(); });
+function closeModal(){$("#modalBg").classList.remove("open")}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
 
-// clipboard + toast
-function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1600); }
-function copyHandle(){ navigator.clipboard.writeText(DISCORD_USERNAME).then(()=>toast("Username copied!")).catch(()=>toast("Copy failed")); }
-function copyMsg(){ navigator.clipboard.writeText(currentMsg).then(()=>toast("Message copied!")).catch(()=>toast("Copy failed")); }
+function toast(t){const el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),1600)}
+function copyHandle(){navigator.clipboard.writeText(DISCORD_USERNAME).then(()=>toast("Username copied!")).catch(()=>toast("Copy failed"))}
+function copyMsg(){navigator.clipboard.writeText(currentMsg).then(()=>toast("Message copied!")).catch(()=>toast("Copy failed"))}
 
-// nav reacts to scroll
-const navEl = document.querySelector("nav");
-window.addEventListener("scroll", () => {
-  navEl.classList.toggle("scrolled", window.scrollY > 20);
-}, { passive:true });
+const navEl=document.querySelector("nav");
+window.addEventListener("scroll",()=>{navEl.classList.toggle("scrolled",window.scrollY>20)},{passive:true});
 
-// scroll-reveal: fade + slide elements in as they enter the viewport
 (function(){
-  const els = [];
-  document.querySelectorAll(".sec-head, .addon-box, .flow-box, .faq-item, #grid .card, #feed .entry")
-    .forEach(el => { el.classList.add("reveal"); els.push(el); });
-  // gentle stagger inside the grid and the feed
-  document.querySelectorAll("#grid .card").forEach((el,i)=> el.style.transitionDelay=(i*45)+"ms");
-  document.querySelectorAll("#feed .entry").forEach((el,i)=> el.style.transitionDelay=(i*70)+"ms");
-  if(!("IntersectionObserver" in window)){ els.forEach(e=>e.classList.add("in")); return; }
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { threshold:.1, rootMargin:"0px 0px -6% 0px" });
+  const els=[];
+  document.querySelectorAll(".sec-head,.addon-box,.flow-box,.faq-item,#grid .card,#feed .entry")
+    .forEach(el=>{el.classList.add("reveal");els.push(el);});
+  document.querySelectorAll("#grid .card").forEach((el,i)=>el.style.transitionDelay=(i*45)+"ms");
+  document.querySelectorAll("#feed .entry").forEach((el,i)=>el.style.transitionDelay=(i*70)+"ms");
+  if(!("IntersectionObserver" in window)){els.forEach(e=>e.classList.add("in"));return;}
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});
+  },{threshold:.1,rootMargin:"0px 0px -6% 0px"});
   els.forEach(e=>io.observe(e));
 })();
 </script>
